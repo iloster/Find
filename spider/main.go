@@ -8,7 +8,10 @@ import (
 	"encoding/xml"
 	"spider/db"
 	"fmt"
-	"regexp"
+	"spider/zhihu"
+	"io/ioutil"
+	"encoding/json"
+	"strconv"
 )
 
 const (
@@ -22,7 +25,7 @@ func main(){
 	flag.Parse()    // 1
 	db.GetDB().Init()
 	//start()
-	zhihu()
+	zhiHu()
 	glog.Flush()
 }
 
@@ -55,10 +58,29 @@ func start(){
 
 }
 
-func zhihu(){
-	url := "https://www.zhihu.com/people/jixin/answers"
-	html := utils.HttpGet(url)
-	//glog.Info("html:"+html)
-	reg := regexp.MustCompile(`<span class="ActivityItem-metaTitle">(.*?)</span>`)
-	glog.Info(reg.FindAll([]byte(html),-1))
+func zhiHu(){
+	//zhihu.Init()
+	url := "http://www.zhihu.com/api/v4/members/jixin/activities?after_id=1496248824&limit=20&desktop=True"
+	res,err:=zhihu.GetSession().Get(url)
+	glog.Info("url:",url)
+	if err == nil{
+		bodyByte, _ := ioutil.ReadAll(res.Body)
+		resStr := string(bodyByte)
+		glog.Info(resStr)
+		ret := structs.ZhihuActivity{}
+		err := json.Unmarshal([]byte(resStr),&ret)
+		glog.Info("err",err)
+		if err == nil{
+			for _,item := range ret.Data {
+				_, err = db.GetDB().InsertTimeLine(1, item.Target.Excerpt, "test", item.Target.Url, Source_Zhihu, strconv.Itoa(item.CreateTime))
+				if err == nil {
+					glog.Info("[Success] title:", item.Target.Excerpt, "| description:", "test", "| link:", item.Target.Url, "| pub_data:", item.CreateTime)
+				} else {
+					glog.Info("[Error] title:", item.Target.Excerpt, "| description:", "test", "| link:", item.Target.Url, "| pub_data:", item.CreateTime, "|error:", err.Error())
+				}
+			}
+		}
+	}else{
+		glog.Info(err.Error())
+	}
 }

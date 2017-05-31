@@ -31,3 +31,24 @@ type TimeLine struct {
 	Link string `field:"link"`
 	PubData string `field:"pub_data"`
 }
+
+//知乎动态的结构
+type ZhihuActivity struct {
+	Paging  ZhihuPaging  `json:"paging"`
+	Data    []ZhihuData	`json:"data"`
+}
+type ZhihuPaging struct {
+	Next  string `json:"next"`
+	Previous string `json:"previous"`
+}
+type ZhihuData struct {
+	Target ZhihuTarget `json:"target"`
+
+	ActionType string `json:"action_text"`
+	CreateTime int `json:"created_time"`
+}
+type ZhihuTarget struct {
+	Excerpt string `json:"excerpt"`
+	Name string `json:"name"`
+	Url  string `json:"url"`
+}
