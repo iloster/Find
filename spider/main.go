@@ -8,6 +8,7 @@ import (
 	"encoding/xml"
 	"spider/db"
 	"fmt"
+	"regexp"
 )
 
 const (
@@ -20,7 +21,8 @@ const (
 func main(){
 	flag.Parse()    // 1
 	db.GetDB().Init()
-	start()
+	//start()
+	zhihu()
 	glog.Flush()
 }
 
@@ -38,13 +40,25 @@ func start(){
 	}
 	for _,item := range ret.Channel.Items{
 		if !db.GetDB().IsExistTimeLineByLink(item.Link){
-			glog.Info("[success] title:",item.Title,"| description:",item.Description,"| link:",item.Link,"| pubData:",item.PubDate)
+
 			tm,_ := utils.ParseTime(item.PubDate)
-			db.GetDB().InsertTimeLine(1,item.Title,item.Description,item.Link,Source_Blog,fmt.Sprintf("%d",tm.Unix()))
+			_,err = db.GetDB().InsertTimeLine(1,item.Title,item.Description,item.Link,Source_Blog,fmt.Sprintf("%d",tm.Unix()))
+			if err == nil {
+				glog.Info("[Success] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+			}else{
+				glog.Info("[Error] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
+			}
 		}else{
-			glog.Info("[exist] title:",item.Title,"| description:",item.Description,"| link:",item.Link,"| pubData:",item.PubDate)
+			glog.Info("[Exist] title:",item.Title,"| description:",item.Description,"| link:",item.Link,"| pubData:",item.PubDate)
 		}
 	}
 
 }
 
+func zhihu(){
+	url := "https://www.zhihu.com/people/jixin/answers"
+	html := utils.HttpGet(url)
+	//glog.Info("html:"+html)
+	reg := regexp.MustCompile(`<span class="ActivityItem-metaTitle">(.*?)</span>`)
+	glog.Info(reg.FindAll([]byte(html),-1))
+}

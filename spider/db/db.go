@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/golang/glog"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type MysqlDB struct {
@@ -23,7 +24,7 @@ func GetDB() *MysqlDB {
 func (this *MysqlDB)Init(){
 	glog.Info("wait init db...")
 	defer glog.Info("init db ok!")
-	db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3307)/waste?charset=utf8")
+	db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3306)/waste?charset=utf8")
  	if err!=nil{
 		panic(err.Error())
 	}else{
