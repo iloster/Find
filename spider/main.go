@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"strconv"
+	"time"
 )
 
 const (
@@ -60,23 +61,50 @@ func start(){
 
 func zhiHu(){
 	//zhihu.Init()
-	url := "http://www.zhihu.com/api/v4/members/jixin/activities?after_id=1496248824&limit=20&desktop=True"
+	url := fmt.Sprintf("http://www.zhihu.com/api/v4/members/jixin/activities?after_id=%d&limit=20&desktop=True",time.Now().Unix())
 	res,err:=zhihu.GetSession().Get(url)
 	glog.Info("url:",url)
 	if err == nil{
 		bodyByte, _ := ioutil.ReadAll(res.Body)
 		resStr := string(bodyByte)
 		glog.Info(resStr)
-		ret := structs.ZhihuActivity{}
+		ret := zhihu.ZhihuActivity{}
 		err := json.Unmarshal([]byte(resStr),&ret)
 		glog.Info("err",err)
 		if err == nil{
 			for _,item := range ret.Data {
-				_, err = db.GetDB().InsertTimeLine(1, item.Target.Excerpt, "test", item.Target.Url, Source_Zhihu, strconv.Itoa(item.CreateTime))
+				var title = ""
+				var desc = ""
+				var link = ""
+				switch item.Verb {
+					case zhihu.Verb_ANSWER_CREATE:{
+						//	回答了问题
+
+					}
+					case zhihu.Verb_ANSWER_VOTE_UP:{
+						//赞同问题
+						title ="赞同了:" + item.Target.Question.Title + "--"+item.Target.Author.Name+"的回答"
+						desc  = item.Target.Excerpt
+						link = fmt.Sprintf("https://www.zhihu.com/question/%s/answer/%s",item.Target.Question.Id,string(item.Target.Id))
+					}
+					case zhihu.Verb_MEMBER_FOLLOW_ROUNDTABLE:{
+						title = "关注了圆桌:" + item.Target.Name
+						desc = item.Target.Description
+						link = fmt.Sprintf("https://www.zhihu.com/roundtable/%s",string(item.Target.Id))
+					}
+					case zhihu.Verb_MEMBER_VOTEUP_ARTICLE:{
+						title = "赞了文章:" + item.Target.Title + "--" + item.Target.Author.Name
+						desc = item.Target.Excerpt
+						link = fmt.Sprintf("https://zhuanlan.zhihu.com/p/%s",string(item.Target.Id))
+					}
+
+				}
+
+				_, err = db.GetDB().InsertTimeLine(1, title, desc, link, Source_Zhihu, strconv.Itoa(item.CreateTime))
 				if err == nil {
-					glog.Info("[Success] title:", item.Target.Excerpt, "| description:", "test", "| link:", item.Target.Url, "| pub_data:", item.CreateTime)
+					glog.Info("[Success] title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
 				} else {
-					glog.Info("[Error] title:", item.Target.Excerpt, "| description:", "test", "| link:", item.Target.Url, "| pub_data:", item.CreateTime, "|error:", err.Error())
+					glog.Info("[Error] title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
 				}
 			}
 		}
