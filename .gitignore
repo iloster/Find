@@ -1,0 +1,5 @@
+.DS_Store
+.idea/
+vendor/
+spider/spider
+spider/zhihu/config.json
