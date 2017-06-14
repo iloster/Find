@@ -6,7 +6,12 @@ import (
 	"github.com/golang/glog"
 	_ "github.com/go-sql-driver/mysql"
 )
-
+type Famous struct {
+	id int  	`json:"id"`
+	blog string	`json:"blog"`
+	zhihu string	`json:"zhihu"`
+	jianshu string	`json:"jianshu"`
+}
 type MysqlDB struct {
 	DB *sql.DB
 }
@@ -77,4 +82,17 @@ func (this *MysqlDB)IsExistTimeLineByLink(link string) bool{
 		return false
 	}
 
+}
+
+func (this *MysqlDB)GetFamousInfo(){
+	sql := "select * from famous"
+	rows,err := this.DB.Query(sql)
+	if err!=nil{
+		panic(err.Error())
+	}
+	ret := []Famous{}
+	if rows.Next() {
+		err = rows.Scan(&ret)
+	}
+	return ret
 }
