@@ -7,10 +7,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 type Famous struct {
-	id int  	`json:"id"`
-	blog string	`json:"blog"`
-	zhihu string	`json:"zhihu"`
-	jianshu string	`json:"jianshu"`
+	Id int  	`json:"id"`
+	Name string     `json:"name"`
+	Blog string	`json:"blog"`
+	ZhiHu string	`json:"zhihu"`
+	JianShu string	`json:"jianshu"`
 }
 type MysqlDB struct {
 	DB *sql.DB
@@ -29,7 +30,7 @@ func GetDB() *MysqlDB {
 func (this *MysqlDB)Init(){
 	glog.Info("wait init db...")
 	defer glog.Info("init db ok!")
-	db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3307)/waste?charset=utf8")
+	db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3306)/waste?charset=utf8")
  	if err!=nil{
 		panic(err.Error())
 	}else{
@@ -84,15 +85,19 @@ func (this *MysqlDB)IsExistTimeLineByLink(link string) bool{
 
 }
 
-func (this *MysqlDB)GetFamousInfo(){
-	sql := "select * from famous"
+func (this *MysqlDB)GetFamousInfo()[]Famous {
+	sql := "SELECT * FROM `famous`"
 	rows,err := this.DB.Query(sql)
 	if err!=nil{
 		panic(err.Error())
 	}
 	ret := []Famous{}
 	if rows.Next() {
-		err = rows.Scan(&ret)
+		item := Famous{}
+		err = rows.Scan(&item.Id,&item.Name,&item.Blog,&item.ZhiHu,&item.JianShu)
+		glog.Info(item)
+		ret = append(ret,item)
 	}
+
 	return ret
 }
