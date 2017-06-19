@@ -42,23 +42,24 @@ type TimeLine struct {
 }
 
 
-func Start(url string){
+func Start(id int,url string){
+	glog.Info("blog url:",url,"| id:",id)
 	html :=utils.HttpGet(url)
 	ret := Feed{}
 	err := xml.Unmarshal([]byte(html),&ret)
 	if err != nil {
-		glog.Info("error: %v", err)
+		glog.Info("error: %v", err.Error())
 		return
 	}
 	for _,item := range ret.Channel.Items{
 		if !db.GetDB().IsExistTimeLineByLink(item.Link){
 
 			tm,_ := utils.ParseTime(item.PubDate)
-			_,err = db.GetDB().InsertTimeLine(1,item.Title,item.Description,item.Link,Source_Blog,fmt.Sprintf("%d",tm.Unix()))
+			_,err = db.GetDB().InsertTimeLine(id,item.Title,item.Description,item.Link,Source_Blog,fmt.Sprintf("%d",tm.Unix()))
 			if err == nil {
-				glog.Info("[Success] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+				glog.Info("[Success] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
 			}else{
-				glog.Info("[Error] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
+				glog.Info("[Error] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
 			}
 		}else{
 			glog.Info("[Exist] title:",item.Title,"| description:",item.Description,"| link:",item.Link,"| pubData:",item.PubDate)

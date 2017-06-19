@@ -5,19 +5,33 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"fmt"
 	"strings"
+	"spider/utils"
+	"spider/db"
 )
-
+var Source_JianShu = 4
 type JianShuData struct {
 	Title    string
 	Href     string
 	Abstract string
-	Pub_date string
+	PubDate string
 	Img      string
 }
-func Start(url string){
+func Start(id int,url string){
+	glog.Info("jianshu url:",url,"| id:",id)
 	ret:=getData(url)
 	for _,item :=range ret{
-		glog.Info("jianshu item:", item)
+		item.Href = "http://www.jianshu.com/" + item.Href
+		if !db.GetDB().IsExistTimeLineByLink(item.Href){
+			tm,_ := utils.ParseTime(item.PubDate)
+			_,err := db.GetDB().InsertTimeLine(id,item.Title,item.Abstract,item.Href,Source_JianShu,fmt.Sprintf("%d",tm.Unix()))
+			if err == nil {
+				glog.Info("[Success] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate)
+			}else{
+				glog.Info("[Error] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate, "|err:", err.Error())
+			}
+		}else{
+			glog.Info("[Exist] title:",item.Title,"| description:",item.Abstract,"| link:",item.Href,"| pubData:",item.PubDate)
+		}
 	}
 }
 
@@ -33,7 +47,7 @@ func getData(url string) []JianShuData{
 				item.Title = s.Find(".title").Text()
 				item.Href, _ = s.Find(".title").Attr("href")
 				item.Abstract = strings.TrimSpace(s.Find(".abstract").Text())
-				item.Pub_date, _ = s.Find(".time").Attr("data-shared-at")
+				item.PubDate, _ = s.Find(".time").Attr("data-shared-at")
 				item.Img,_ = s.Find(".img-blur-done").Attr("src")
 
 				ret = append(ret,item)

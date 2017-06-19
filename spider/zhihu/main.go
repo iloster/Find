@@ -64,9 +64,9 @@ type ZhihuAuthor struct {
 	Avatar string `json:"avatar_url"` //回答者头像
 }
 
-func Start(url string){
+func Start(id int,url string){
 	res,err:=GetSession().Get(url)
-	glog.Info("url:",url)
+	glog.Info("zhihu url:",url,"| id:",id)
 	if err == nil{
 		bodyByte, _ := ioutil.ReadAll(res.Body)
 		resStr := string(bodyByte)
@@ -136,11 +136,11 @@ func Start(url string){
 
 				}
 
-				_, err = db.GetDB().InsertTimeLine(1, title, desc, link, Source_Zhihu, strconv.Itoa(item.CreateTime))
+				_, err = db.GetDB().InsertTimeLine(id, title, desc, link, Source_Zhihu, strconv.Itoa(item.CreateTime))
 				if err == nil {
-					glog.Info("[Success] title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
+					glog.Info("[Success] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
 				} else {
-					glog.Info("[Error] title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
+					glog.Info("[Error] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
 				}
 			}
 		}

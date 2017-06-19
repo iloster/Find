@@ -4,15 +4,33 @@ import (
 	"github.com/golang/glog"
 	"flag"
 	"spider/db"
+
+	"spider/zhihu"
+	"fmt"
+	"time"
+	"spider/blog"
+	"strings"
+	"spider/jianshu"
 )
 
 func main(){
 	flag.Parse()    // 1
 	db.GetDB().Init()
-	//zhihu.Start(fmt.Sprintf("http://www.zhihu.com/api/v4/members/jixin/activities?after_id=%d&limit=20&desktop=True",time.Now().Unix()))
-	//blog.Start("http://coolshell.cn/rss")
-	//jianshu.Start("http://www.jianshu.com/u/c22ccc510fb9")
-	getFamousInfo()
+	ret := []db.Famous{}
+	ret = db.GetDB().GetFamousInfo()
+	glog.Info("ret:",ret)
+	for _,item := range ret{
+		if item.Blog!="" {
+			blog.Start(item.Id, strings.TrimSpace(item.Blog))
+		}
+		if item.JianShu != "" {
+			jianshu.Start(item.Id, item.JianShu)
+		}
+		if item.ZhiHu != "" {
+			zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", "jixin", time.Now().Unix()))
+		}
+	}
+
 	glog.Flush()
 
 }

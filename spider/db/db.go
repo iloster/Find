@@ -92,7 +92,7 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 		panic(err.Error())
 	}
 	ret := []Famous{}
-	if rows.Next() {
+	for rows.Next() {
 		item := Famous{}
 		err = rows.Scan(&item.Id,&item.Name,&item.Blog,&item.ZhiHu,&item.JianShu)
 		glog.Info(item)

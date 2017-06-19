@@ -75,7 +75,7 @@ func newHTTPHeaders(isXhr bool) http.Header {
 	headers.Set("Origin", "http://www.zhihu.com")
 	headers.Set("Pragma", "no-cache")
 	headers.Set("User-Agent", userAgent)
-	headers.Set("authorization","Bearer Mi4wQUFDQVRzNG5BQUFBRUlMT1pCNldDeGNBQUFCaEFsVk5ULVVfV1FBZ04xTkU5bTUtdGdnWVNlTkRCNjQ2T0FndHZn|1496242671|587fcff4437e7fe0b0f5540a0a1b04a412935efc")
+	headers.Set("authorization","Bearer 2|1:0|10:1497589571|4:z_c0|92:Mi4wQUFDQVRzNG5BQUFBQU1LcEx4UGtDaVlBQUFCZ0FsVk5RX1JxV1FDZ1RTY0NrNHNxdGEwR1RxSnlnamVnYWpGbTF3|1f5e56e16bb1e49d457624f3c38f639824ff783079c4ba2dda168678eb67d06c")
 	if isXhr {
 		headers.Set("X-Requested-With", "XMLHttpRequest")
 	}
