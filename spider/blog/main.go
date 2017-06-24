@@ -6,6 +6,7 @@ import (
 	"github.com/golang/glog"
 	"spider/db"
 	"fmt"
+	"strings"
 )
 
 var Source_Blog = 1
@@ -32,6 +33,24 @@ type Sql struct {
 	Data  interface{}
 }
 
+
+type Atom struct {
+	Feed xml.Name `xml:"feed"`
+	Entrys []Entry `xml:"entry"`
+}
+
+type Entry struct {
+	Title string `xml:"title"`
+	Summary string `xml:"summary"`
+	AtomLink AtomLink `xml:"link"`
+	PubDate string `xml:"updated"`
+}
+
+type AtomLink struct {
+	Link xml.Name `xml:"link"`
+	Href string `xml:"href,attr"`
+}
+
 type TimeLine struct {
 	Id  int `field:"id"`
 	UserId int `field:"userid"`
@@ -45,25 +64,47 @@ type TimeLine struct {
 func Start(id int,url string){
 	glog.Info("blog url:",url,"| id:",id)
 	html :=utils.HttpGet(url)
-	ret := Feed{}
-	err := xml.Unmarshal([]byte(html),&ret)
-	if err != nil {
-		glog.Info("error: %v", err.Error())
-		return
-	}
-	for _,item := range ret.Channel.Items{
-		if !db.GetDB().IsExistTimeLineByLink(item.Link){
-
-			tm,_ := utils.ParseTime(item.PubDate)
-			_,err = db.GetDB().InsertTimeLine(id,item.Title,item.Description,item.Link,Source_Blog,fmt.Sprintf("%d",tm.Unix()))
-			if err == nil {
-				glog.Info("[Success] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+	glog.Info(strings.Index(html,"<feed"))
+	if strings.Index(html,"<feed") == 39{
+		ret := Atom{}
+		err := xml.Unmarshal([]byte(html),&ret)
+		if err != nil{
+			glog.Info("error:%v",err.Error())
+		}
+		glog.Info(ret)
+		for _,entry := range ret.Entrys{
+			if !db.GetDB().IsExistTimeLineByLink(entry.AtomLink.Href){
+				tm, _ := utils.ParseTime(entry.PubDate)
+				_, err = db.GetDB().InsertTimeLine(id, entry.Title, entry.Summary, entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				if err == nil {
+					glog.Info("[Success] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
+				} else {
+					glog.Info("[Error] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate, "|err:", err.Error())
+				}
 			}else{
-				glog.Info("[Error] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
+				glog.Info("[Exist] title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
 			}
-		}else{
-			glog.Info("[Exist] title:",item.Title,"| description:",item.Description,"| link:",item.Link,"| pubData:",item.PubDate)
+		}
+	}else {
+		ret := Feed{}
+		err := xml.Unmarshal([]byte(html), &ret)
+		if err != nil {
+			glog.Info("error: %v", err.Error())
+			return
+		}
+		for _, item := range ret.Channel.Items {
+			if !db.GetDB().IsExistTimeLineByLink(item.Link) {
+
+				tm, _ := utils.ParseTime(item.PubDate)
+				_, err = db.GetDB().InsertTimeLine(id, item.Title, item.Description, item.Link, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				if err == nil {
+					glog.Info("[Success] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+				} else {
+					glog.Info("[Error] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
+				}
+			} else {
+				glog.Info("[Exist] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+			}
 		}
 	}
-
 }
