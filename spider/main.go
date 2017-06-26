@@ -8,6 +8,9 @@ import (
 	"spider/blog"
 	"strings"
 	"spider/jianshu"
+	"spider/zhihu"
+	"fmt"
+	"time"
 )
 
 func main(){
@@ -23,9 +26,9 @@ func main(){
 		if item.JianShu != "" {
 			jianshu.Start(item.Id, item.JianShu)
 		}
-		//if item.ZhiHu != "" {
-		//	zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", "jixin", time.Now().Unix()))
-		//}
+		if item.ZhiHu != "" {
+			zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", "jixin", time.Now().Unix()))
+		}
 	}
 
 	glog.Flush()

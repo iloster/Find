@@ -7,6 +7,8 @@ import (
 	"spider/db"
 	"fmt"
 	"strings"
+	"bytes"
+	"golang.org/x/net/html/charset"
 )
 
 var Source_Blog = 1
@@ -65,13 +67,17 @@ func Start(id int,url string){
 	glog.Info("blog url:",url,"| id:",id)
 	html :=utils.HttpGet(url)
 	glog.Info(strings.Index(html,"<feed"))
-	if strings.Index(html,"<feed") == 39{
+	if strings.Index(html,"<feed") < 100{
 		ret := Atom{}
-		err := xml.Unmarshal([]byte(html),&ret)
+		reader := bytes.NewReader([]byte(html))
+		decoder := xml.NewDecoder(reader)
+		decoder.CharsetReader = charset.NewReaderLabel
+		err := decoder.Decode(&ret)
+		//err := xml.Unmarshal([]byte(html),&ret)
 		if err != nil{
 			glog.Info("error:%v",err.Error())
 		}
-		glog.Info(ret)
+		//glog.Info(ret)
 		for _,entry := range ret.Entrys{
 			if !db.GetDB().IsExistTimeLineByLink(entry.AtomLink.Href){
 				tm, _ := utils.ParseTime(entry.PubDate)
