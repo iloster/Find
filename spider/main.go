@@ -27,7 +27,7 @@ func main(){
 			jianshu.Start(item.Id, item.JianShu)
 		}
 		if item.ZhiHu != "" {
-			zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", "jixin", time.Now().Unix()))
+			zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHu), time.Now().Unix()))
 		}
 	}
 

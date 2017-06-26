@@ -70,7 +70,7 @@ func Start(id int,url string){
 	if err == nil{
 		bodyByte, _ := ioutil.ReadAll(res.Body)
 		resStr := string(bodyByte)
-		glog.Info(resStr)
+		//glog.Info(resStr)
 		ret := ZhihuActivity{}
 		err := json.Unmarshal([]byte(resStr),&ret)
 		glog.Info("err",err)

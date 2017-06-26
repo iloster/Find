@@ -67,7 +67,7 @@ func Start(id int,url string){
 	glog.Info("blog url:",url,"| id:",id)
 	html :=utils.HttpGet(url)
 	glog.Info(strings.Index(html,"<feed"))
-	if strings.Index(html,"<feed") < 100{
+	if strings.Index(html,"<feed") < 100&&strings.Index(html,"<feed")>0{
 		ret := Atom{}
 		reader := bytes.NewReader([]byte(html))
 		decoder := xml.NewDecoder(reader)
