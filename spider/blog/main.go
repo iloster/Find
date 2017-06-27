@@ -45,7 +45,7 @@ type Entry struct {
 	Title string `xml:"title"`
 	Summary string `xml:"summary"`
 	AtomLink AtomLink `xml:"link"`
-	PubDate string `xml:"updated"`
+	PubDate string `xml:"published"`
 }
 
 type AtomLink struct {

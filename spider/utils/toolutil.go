@@ -3,12 +3,10 @@ package utils
 import (
 	"time"
 	"strings"
-	"github.com/golang/glog"
 )
 
 func ParseTime(formatted string) (time.Time, error) {
 	var layouts = [...]string{
-		"2006-01-27T01:47:05Z",
 		"Mon, _2 Jan 2006 15:04:05 CCT",
 		"Mon, _2 Jan 2006 15:04:05 +0000",
 		time.ANSIC,
@@ -30,7 +28,7 @@ func ParseTime(formatted string) (time.Time, error) {
 	loc, _ := time.LoadLocation("Local")
 	for _, layout := range layouts {
 		t, err = time.ParseInLocation(layout, formatted,loc)
-		glog.Info("layout:",layout,"|t:",t)
+		//glog.Info("layout:",layout,"|t:",t,"|loc:",loc)
 		if !t.IsZero() {
 			break
 		}
