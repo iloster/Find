@@ -135,12 +135,15 @@ func Start(id int,url string){
 
 
 				}
-
-				_, err = db.GetDB().InsertTimeLine(id, title, desc, link, Source_Zhihu, strconv.Itoa(item.CreateTime))
-				if err == nil {
-					glog.Info("[Success] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
-				} else {
-					glog.Info("[Error] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
+				if !db.GetDB().IsExistTimeLineByLink(link){
+					_, err = db.GetDB().InsertTimeLine(id, title, desc, link, Source_Zhihu, strconv.Itoa(item.CreateTime))
+					if err == nil {
+						glog.Info("[Success] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
+					} else {
+						glog.Info("[Error] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
+					}
+				}else{
+					glog.Info("[Exist] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
 				}
 			}
 		}

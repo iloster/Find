@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/golang/glog"
 	_ "github.com/go-sql-driver/mysql"
+	"spider/utils"
 )
 type Famous struct {
 	Id int  	`json:"id"`
@@ -57,7 +58,7 @@ func (this *MysqlDB)Init(){
 func (this *MysqlDB)InsertTimeLine(userid int,title string,description string,link string,source int,pub_data string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
 	str := "insert into time_line (`userid`,`title`,`description`,`link`,`source`,`pub_data`) values (%d,%q,%q,%q,%d,%s)"
-	sql := fmt.Sprintf(str,userid,title,description,link,source,pub_data)
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,source,pub_data)
 	glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{
@@ -74,6 +75,7 @@ func (this *MysqlDB)IsExistTimeLineByLink(link string) bool{
 	str := "select * from time_line where `link`= %q"
 	sql := fmt.Sprintf(str,link)
 	rows, err := this.DB.Query(sql)
+	defer rows.Close()
 	if err != nil{
 		//return err
 		panic(err.Error())
@@ -89,6 +91,7 @@ func (this *MysqlDB)IsExistTimeLineByLink(link string) bool{
 func (this *MysqlDB)GetFamousInfo()[]Famous {
 	sql := "SELECT * FROM `famous`"
 	rows,err := this.DB.Query(sql)
+	defer rows.Close()
 	if err!=nil{
 		panic(err.Error())
 	}

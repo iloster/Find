@@ -81,7 +81,7 @@ func Start(id int,url string){
 		for _,entry := range ret.Entrys{
 			if !db.GetDB().IsExistTimeLineByLink(entry.AtomLink.Href){
 				tm, _ := utils.ParseTime(entry.PubDate)
-				_, err = db.GetDB().InsertTimeLine(id, entry.Title, entry.Summary, entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				_, err = db.GetDB().InsertTimeLine(id, entry.Title, utils.SubString(entry.Summary,0,1500), entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
 				if err == nil {
 					glog.Info("[Success] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
 				} else {
