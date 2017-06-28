@@ -4,11 +4,12 @@ import (
 	"github.com/golang/glog"
 	"flag"
 	"spider/db"
-	"fmt"
+
 	"spider/blog"
 	"strings"
 	"spider/jianshu"
 	"spider/zhihu"
+	"fmt"
 	"time"
 )
 
@@ -17,9 +18,11 @@ func main(){
 	db.GetDB().Init()
 	ret := []db.Famous{}
 	ret = db.GetDB().GetFamousInfo()
-	glog.Info("ret:",ret)
 	for _,item := range ret{
-		if item.Blog!="" {
+		//if item.Id != 20 {
+		//	continue
+		//}
+		if item.Blog != "" {
 			blog.Start(item.Id, strings.TrimSpace(item.Blog))
 		}
 		if item.JianShu != "" {

@@ -59,7 +59,7 @@ func (this *MysqlDB)InsertTimeLine(userid int,title string,description string,li
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
 	str := "insert into time_line (`userid`,`title`,`description`,`link`,`source`,`pub_data`) values (%d,%q,%q,%q,%d,%s)"
 	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,source,pub_data)
-	glog.Info("sql:",sql)
+	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{
 		return 0,err

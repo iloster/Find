@@ -3,9 +3,29 @@ package utils
 import (
 	"time"
 	"strings"
+	"net/url"
+	"github.com/golang/glog"
+	"strconv"
 )
 
 func ParseTime(formatted string) (time.Time, error) {
+	if strings.Contains(formatted,"/"){
+		splitStr := strings.Split(formatted," ")
+		if len(splitStr)!=2{
+			glog.Error("ParseTime Error str:",formatted)
+			return time.Now(),nil
+		}
+
+		splitStr1 := strings.Split(splitStr[0],"/")
+		year,_ := strconv.Atoi(splitStr1[0])
+		mon,_ := strconv.Atoi(splitStr1[1])
+		day,_:=strconv.Atoi(splitStr1[2])
+		splitStr2 := strings.Split(splitStr[1],":")
+		hour,_ := strconv.Atoi(splitStr2[0])
+		minute,_ := strconv.Atoi(splitStr2[1])
+		second,_ := strconv.Atoi(splitStr2[2])
+		return time.Date(year, time.Month(mon), day, hour, minute, second, 0, time.Local),nil
+	}
 	var layouts = [...]string{
 		"Mon, _2 Jan 2006 15:04:05 CCT",
 		"Mon, _2 Jan 2006 15:04:05 +0000",
@@ -28,7 +48,6 @@ func ParseTime(formatted string) (time.Time, error) {
 	loc, _ := time.LoadLocation("Local")
 	for _, layout := range layouts {
 		t, err = time.ParseInLocation(layout, formatted,loc)
-		//glog.Info("layout:",layout,"|t:",t,"|loc:",loc)
 		if !t.IsZero() {
 			break
 		}
@@ -54,4 +73,9 @@ func SubString(str string,begin int,length int) (substr string) {
 
 	// 返回子串
 	return string(rs[begin:end])
+}
+
+func UrlDecode(urlstr string)(ret string){
+	ret1,_ := url.QueryUnescape(urlstr)
+	return ret1
 }

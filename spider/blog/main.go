@@ -81,14 +81,14 @@ func Start(id int,url string){
 		for _,entry := range ret.Entrys{
 			if !db.GetDB().IsExistTimeLineByLink(entry.AtomLink.Href){
 				tm, _ := utils.ParseTime(entry.PubDate)
-				_, err = db.GetDB().InsertTimeLine(id, entry.Title, utils.SubString(entry.Summary,0,1500), entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				_, err = db.GetDB().InsertTimeLine(id, entry.Title, utils.SubString(strings.Replace(entry.Summary,"\n","",-1),0,500), entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
 				if err == nil {
-					glog.Info("[Success] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
+					//glog.Info("[Success] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
 				} else {
-					glog.Info("[Error] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate, "|err:", err.Error())
+					glog.Info("[Error] blog title:", entry.Title, "| description:", utils.SubString(strings.Replace(entry.Summary,"\n","",-1),0,500), "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate, "|err:", err.Error())
 				}
 			}else{
-				glog.Info("[Exist] title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
+				//glog.Info("[Exist] title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
 			}
 		}
 	}else {
@@ -99,17 +99,18 @@ func Start(id int,url string){
 			return
 		}
 		for _, item := range ret.Channel.Items {
+			item.Link = utils.UrlDecode(item.Link)
 			if !db.GetDB().IsExistTimeLineByLink(item.Link) {
 
 				tm, _ := utils.ParseTime(item.PubDate)
-				_, err = db.GetDB().InsertTimeLine(id, item.Title, item.Description, item.Link, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				_, err = db.GetDB().InsertTimeLine(id, item.Title, utils.SubString(strings.Replace(item.Description,"\n","",-1),0,500), item.Link, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
 				if err == nil {
-					glog.Info("[Success] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+					//glog.Info("[Success] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
 				} else {
-					glog.Info("[Error] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
+					glog.Info("[Error] blog title:", item.Title, "| description:",utils.SubString(strings.Replace(item.Description,"\n","",-1),0,500), "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
 				}
 			} else {
-				glog.Info("[Exist] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+				//glog.Info("[Exist] title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
 			}
 		}
 	}

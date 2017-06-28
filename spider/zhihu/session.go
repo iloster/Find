@@ -168,7 +168,7 @@ func (s *Session) Login() error {
 
 // Get 发起一个 GET 请求，自动处理 cookies
 func (s *Session) Get(url string) (*http.Response, error) {
-	glog.Info("GET %s", url)
+	//glog.Info("GET %s", url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		glog.Info("NewRequest failed with URL: %s", url)

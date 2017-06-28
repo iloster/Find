@@ -20,17 +20,17 @@ func Start(id int,url string){
 	glog.Info("jianshu url:",url,"| id:",id)
 	ret:=getData(url)
 	for _,item :=range ret{
-		item.Href = "http://www.jianshu.com/" + item.Href
+		item.Href = "http://www.jianshu.com" + item.Href
 		if !db.GetDB().IsExistTimeLineByLink(item.Href){
 			tm,_ := utils.ParseTime(item.PubDate)
 			_,err := db.GetDB().InsertTimeLine(id,item.Title,item.Abstract,item.Href,Source_JianShu,fmt.Sprintf("%d",tm.Unix()))
 			if err == nil {
-				glog.Info("[Success] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate)
+				//glog.Info("[Success] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate)
 			}else{
 				glog.Info("[Error] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate, "|err:", err.Error())
 			}
 		}else{
-			glog.Info("[Exist] title:",item.Title,"| description:",item.Abstract,"| link:",item.Href,"| pubData:",item.PubDate)
+			//glog.Info("[Exist] title:",item.Title,"| description:",item.Abstract,"| link:",item.Href,"| pubData:",item.PubDate)
 		}
 	}
 }
@@ -38,7 +38,7 @@ func Start(id int,url string){
 func getData(url string) []JianShuData{
 	ret := []JianShuData{}
 	for i:=1;i<5;i++ {
-		pageurl := fmt.Sprintf(url + "?order_by=shared_at&page=%d",i)
+		pageurl := fmt.Sprintf(url + "?order_by=shared_at&_pjax=#list-container&page=%d",i)
 		glog.Info("jianshu Start pageurl:",pageurl)
 		doc, err := goquery.NewDocument(pageurl)
 		if err == nil {

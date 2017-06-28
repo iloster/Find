@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"github.com/golang/glog"
 	"io/ioutil"
+	"spider/utils"
 )
 var Source_Zhihu = 3
 //ANSWER_CREATE  回答问题
@@ -136,14 +137,14 @@ func Start(id int,url string){
 
 				}
 				if !db.GetDB().IsExistTimeLineByLink(link){
-					_, err = db.GetDB().InsertTimeLine(id, title, desc, link, Source_Zhihu, strconv.Itoa(item.CreateTime))
+					_, err = db.GetDB().InsertTimeLine(id, title, utils.SubString(desc,0,1000), link, Source_Zhihu, strconv.Itoa(item.CreateTime))
 					if err == nil {
-						glog.Info("[Success] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
+						//glog.Info("[Success] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
 					} else {
 						glog.Info("[Error] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
 					}
 				}else{
-					glog.Info("[Exist] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
+					//glog.Info("[Exist] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
 				}
 			}
 		}
