@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"github.com/golang/glog"
 	"strconv"
+	"fmt"
 )
 
 func ParseTime(formatted string) (time.Time, error) {
@@ -78,4 +79,12 @@ func SubString(str string,begin int,length int) (substr string) {
 func UrlDecode(urlstr string)(ret string){
 	ret1,_ := url.QueryUnescape(urlstr)
 	return ret1
+}
+
+func PushToWeChat(name string,num1 int,num2 int,cost int64){
+	text:=name+"运行成功"
+	desp :=fmt.Sprintf("更新成功%d条记录,失败%d记录,总共用时%ds",num1,num2,cost)
+	url := fmt.Sprintf("https://sc.ftqq.com/SCU9659T32a012053f440b7d103c7df59301b1de59550945a4fa9.send?text=%q&&desp=%q",text,desp)
+	glog.Info(url)
+	HttpGet(url)
 }

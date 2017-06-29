@@ -64,8 +64,10 @@ type TimeLine struct {
 }
 
 
-func Start(id int,url string){
+func Start(id int,url string) (int,int){
 	glog.Info("blog url:",url,"| id:",id)
+	successNum := 0
+	failedNum := 0
 	html :=utils.HttpGet(url)
 	glog.Info(strings.Index(html,"<feed"))
 	if strings.Index(html,"<feed") < 100&&strings.Index(html,"<feed")>0{
@@ -77,19 +79,22 @@ func Start(id int,url string){
 		//err := xml.Unmarshal([]byte(html),&ret)
 		if err != nil{
 			glog.Info("error:%v",err.Error())
+			return 0,0
 		}
 		//glog.Info(ret)
 		for _,entry := range ret.Entrys{
-			if !db.GetDB().IsExistTimeLineByLink(entry.AtomLink.Href){
+			if !db.GetDB().IsExistTimeLineByLink(db.Table_Blog,entry.AtomLink.Href){
 				if entry.PubDate == "" {
 					entry.PubDate = entry.UpdateDate
 				}
 				entry.AtomLink.Href = utils.UrlDecode(entry.AtomLink.Href)
 				tm, _ := utils.ParseTime(entry.PubDate)
-				_, err = db.GetDB().InsertTimeLine(id, entry.Title, utils.SubString(strings.Replace(entry.Summary,"\n","",-1),0,500), entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				_, err = db.GetDB().InsertTimeLineBlog(id, entry.Title, utils.SubString(strings.Replace(entry.Summary,"\n","",-1),0,500), entry.AtomLink.Href, fmt.Sprintf("%d", tm.Unix()))
 				if err == nil {
 					//glog.Info("[Success] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
+					successNum++
 				} else {
+					failedNum++
 					glog.Info("[Error] blog title:", entry.Title, "| description:", utils.SubString(strings.Replace(entry.Summary,"\n","",-1),0,500), "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate, "|err:", err.Error())
 				}
 			}else{
@@ -101,17 +106,19 @@ func Start(id int,url string){
 		err := xml.Unmarshal([]byte(html), &ret)
 		if err != nil {
 			glog.Info("error: %v", err.Error())
-			return
+			return 0,0
 		}
 		for _, item := range ret.Channel.Items {
 			item.Link = utils.UrlDecode(item.Link)
-			if !db.GetDB().IsExistTimeLineByLink(item.Link) {
+			if !db.GetDB().IsExistTimeLineByLink(db.Table_Blog,item.Link) {
 
 				tm, _ := utils.ParseTime(item.PubDate)
-				_, err = db.GetDB().InsertTimeLine(id, item.Title, utils.SubString(strings.Replace(item.Description,"\n","",-1),0,500), item.Link, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
+				_, err = db.GetDB().InsertTimeLineBlog(id, item.Title, utils.SubString(strings.Replace(item.Description,"\n","",-1),0,500), item.Link, fmt.Sprintf("%d", tm.Unix()))
 				if err == nil {
 					//glog.Info("[Success] blog title:", item.Title, "| description:", item.Description, "| link:", item.Link, "| pubData:", item.PubDate)
+					successNum++
 				} else {
+					failedNum++
 					glog.Info("[Error] blog title:", item.Title, "| description:",utils.SubString(strings.Replace(item.Description,"\n","",-1),0,500), "| link:", item.Link, "| pubData:", item.PubDate, "|err:", err.Error())
 				}
 			} else {
@@ -119,4 +126,5 @@ func Start(id int,url string){
 			}
 		}
 	}
+	return successNum,failedNum
 }

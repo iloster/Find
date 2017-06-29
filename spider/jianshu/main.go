@@ -16,23 +16,28 @@ type JianShuData struct {
 	PubDate string
 	Img      string
 }
-func Start(id int,url string){
+func Start(id int,url string)(int,int){
 	glog.Info("jianshu url:",url,"| id:",id)
 	ret:=getData(url)
+	successNum := 0
+	failedNum := 0
 	for _,item :=range ret{
 		item.Href = "http://www.jianshu.com" + item.Href
-		if !db.GetDB().IsExistTimeLineByLink(item.Href){
+		if !db.GetDB().IsExistTimeLineByLink(db.Table_JianShu,item.Href){
 			tm,_ := utils.ParseTime(item.PubDate)
-			_,err := db.GetDB().InsertTimeLine(id,item.Title,item.Abstract,item.Href,Source_JianShu,fmt.Sprintf("%d",tm.Unix()))
+			_,err := db.GetDB().InsertTimeLineJianShu(id,item.Title,item.Abstract,item.Href,fmt.Sprintf("%d",tm.Unix()))
 			if err == nil {
 				//glog.Info("[Success] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate)
+				successNum++
 			}else{
+				failedNum++
 				glog.Info("[Error] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate, "|err:", err.Error())
 			}
 		}else{
 			//glog.Info("[Exist] title:",item.Title,"| description:",item.Abstract,"| link:",item.Href,"| pubData:",item.PubDate)
 		}
 	}
+	return successNum,failedNum
 }
 
 func getData(url string) []JianShuData{

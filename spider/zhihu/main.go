@@ -65,9 +65,11 @@ type ZhihuAuthor struct {
 	Avatar string `json:"avatar_url"` //回答者头像
 }
 
-func Start(id int,url string){
+func Start(id int,url string)(int,int){
 	res,err:=GetSession().Get(url)
 	glog.Info("zhihu url:",url,"| id:",id)
+	successNum := 0
+	failedNum := 0
 	if err == nil{
 		bodyByte, _ := ioutil.ReadAll(res.Body)
 		resStr := string(bodyByte)
@@ -136,11 +138,13 @@ func Start(id int,url string){
 
 
 				}
-				if !db.GetDB().IsExistTimeLineByLink(link){
-					_, err = db.GetDB().InsertTimeLine(id, title, utils.SubString(desc,0,1000), link, Source_Zhihu, strconv.Itoa(item.CreateTime))
+				if !db.GetDB().IsExistTimeLineByLink(db.Table_ZhiHu,link){
+					_, err = db.GetDB().InsertTimeLineZhiHu(id, title, utils.SubString(desc,0,1000), link, item.Verb, strconv.Itoa(item.CreateTime))
 					if err == nil {
 						//glog.Info("[Success] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime)
+						successNum++
 					} else {
+						failedNum++
 						glog.Info("[Error] zhihu title:", title, "| description:", desc, "| link:", link, "| pub_data:", item.CreateTime, "|error:", err.Error())
 					}
 				}else{
@@ -150,5 +154,7 @@ func Start(id int,url string){
 		}
 	}else{
 		glog.Info(err.Error())
+
 	}
+	return successNum,failedNum
 }
