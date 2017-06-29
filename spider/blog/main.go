@@ -46,6 +46,7 @@ type Entry struct {
 	Summary string `xml:"summary"`
 	AtomLink AtomLink `xml:"link"`
 	PubDate string `xml:"published"`
+	UpdateDate string `xml:"updated"`
 }
 
 type AtomLink struct {
@@ -80,6 +81,10 @@ func Start(id int,url string){
 		//glog.Info(ret)
 		for _,entry := range ret.Entrys{
 			if !db.GetDB().IsExistTimeLineByLink(entry.AtomLink.Href){
+				if entry.PubDate == "" {
+					entry.PubDate = entry.UpdateDate
+				}
+				entry.AtomLink.Href = utils.UrlDecode(entry.AtomLink.Href)
 				tm, _ := utils.ParseTime(entry.PubDate)
 				_, err = db.GetDB().InsertTimeLine(id, entry.Title, utils.SubString(strings.Replace(entry.Summary,"\n","",-1),0,500), entry.AtomLink.Href, Source_Blog, fmt.Sprintf("%d", tm.Unix()))
 				if err == nil {

@@ -19,7 +19,7 @@ func main(){
 	ret := []db.Famous{}
 	ret = db.GetDB().GetFamousInfo()
 	for _,item := range ret{
-		//if item.Id != 20 {
+		//if item.Id != 29 {
 		//	continue
 		//}
 		if item.Blog != "" {
