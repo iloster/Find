@@ -6,6 +6,8 @@ import (
 	"github.com/golang/glog"
 	_ "github.com/go-sql-driver/mysql"
 	"spider/utils"
+
+	"spider/cfg"
 )
 type Famous struct {
 	Id int  	`json:"id"`
@@ -14,6 +16,7 @@ type Famous struct {
 	ZhiHu string	`json:"zhihu"`
 	JianShu string	`json:"jianshu"`
 	Avater string   `json:"avater"`
+	Brief string
 }
 type MysqlDB struct {
 	DB *sql.DB
@@ -35,9 +38,14 @@ func GetDB() *MysqlDB {
 }
 
 func (this *MysqlDB)Init(){
-	glog.Info("wait init db...")
+	mysqlcfg := cfg.GetCfg().GetMysqlCfg()
+	glog.Info(mysqlcfg)
+	path:=fmt.Sprintf("%s:%s@tcp(127.0.0.1:%d)/%s?charset=utf8mb4",mysqlcfg.UserName,mysqlcfg.Password,mysqlcfg.Port,mysqlcfg.DataBase)
+	glog.Info("wait init db...",path)
 	defer glog.Info("init db ok!")
-	db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3307)/waste?charset=utf8")
+	//db,err := sql.Open("mysql","root:licheng19931202@tcp(127.0.0.1:3306)/trace?charset=utf8")
+	//db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3306)/waste?charset=utf8")
+	db,err := sql.Open("mysql",path)
  	if err!=nil{
 		panic(err.Error())
 	}else{
@@ -164,13 +172,16 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 	if err!=nil{
 		panic(err.Error())
 	}
+	if rows.Err()!=nil{
+		panic(rows.Err().Error())
+	}
 	ret := []Famous{}
+
 	for rows.Next() {
 		item := Famous{}
-		err = rows.Scan(&item.Id,&item.Name,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Avater)
-		glog.Info(item)
+		err = rows.Scan(&item.Id,&item.Name,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Avater,&item.Brief)
+		glog.Info(err,item)
 		ret = append(ret,item)
 	}
-
 	return ret
 }

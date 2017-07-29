@@ -42,6 +42,7 @@ func ParseTime(formatted string) (time.Time, error) {
 		time.RFC3339Nano,
 		"Mon, 2, Jan 2006 15:4",
 		"02 Jan 2006 15:04:05 CCT",
+		"Fri Jun 16 2017 16:24:00 GMT+0800 (CST)",
 	}
 	var t time.Time
 	var err error
