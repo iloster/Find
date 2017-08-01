@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"github.com/golang/glog"
+	"spider/cfg"
 )
 
 const (
@@ -75,7 +76,8 @@ func newHTTPHeaders(isXhr bool) http.Header {
 	headers.Set("Origin", "http://www.zhihu.com")
 	headers.Set("Pragma", "no-cache")
 	headers.Set("User-Agent", userAgent)
-	headers.Set("authorization","Bearer Mi4wQUFDQVRzNG5BQUFBQU1LcEx4UGtDaGNBQUFCaEFsVk5WSm1qV1FCaWN2VGtxRU4tNWxYY1Q0Z3JucFM5Qi1KNGRR|1501301844|85596a24b9e4d91aadd03098de887166321e1f8a")
+	//headers.Set("authorization","Bearer Mi4wQUFDQVRzNG5BQUFBQU1LcEx4UGtDaGNBQUFCaEFsVk5WSm1qV1FCaWN2VGtxRU4tNWxYY1Q0Z3JucFM5Qi1KNGRR|1501301844|85596a24b9e4d91aadd03098de887166321e1f8a")
+	headers.Set("authorization",cfg.GetCfg().GetZhihuCfg().Authorization)
 	if isXhr {
 		headers.Set("X-Requested-With", "XMLHttpRequest")
 	}

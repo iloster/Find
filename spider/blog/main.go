@@ -69,7 +69,7 @@ func Start(id int,url string) (int,int){
 	successNum := 0
 	failedNum := 0
 	html :=utils.HttpGet(url)
-	glog.Info(strings.Index(html,"<feed"))
+	//glog.Info(strings.Index(html,"<feed"))
 	if strings.Index(html,"<feed") < 100&&strings.Index(html,"<feed")>0{
 		ret := Atom{}
 		reader := bytes.NewReader([]byte(html))

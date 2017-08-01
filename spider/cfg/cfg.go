@@ -13,8 +13,24 @@ type MysqlCfg struct {
 	DataBase string `json:"database"`
 }
 
+type ZhihuCfg struct {
+	Authorization string `json:"authorization"`
+	Open  bool `json:"open"`
+}
+
+type JianshuCfg struct {
+	Open bool `json:"open"`
+}
+
+type BlogCfg struct {
+	Open bool `json:"open"`
+}
 type Cfg struct {
-	MysqlCfg *MysqlCfg `json:"mysql"`
+	MysqlCfg 	*MysqlCfg 	`json:"mysql"`
+	Push    	bool       	`json:"push"`
+	ZhihuCfg   	*ZhihuCfg  	`json:"zhihu"`
+	JianshuCfg	*JianshuCfg 	`json:"jianshu"`
+	BlogCfg		*BlogCfg	`json:"blog"`
 }
 var cfg *Cfg
 
@@ -40,6 +56,21 @@ func (this *Cfg)LoadCfg(path string){
 }
 
 func (this *Cfg)GetMysqlCfg() *MysqlCfg{
-	return this.MysqlCfg;
+	return this.MysqlCfg
 }
 
+func (this *Cfg)GetPushStatus() bool{
+	return this.Push
+}
+
+func (this *Cfg)GetZhihuCfg() *ZhihuCfg {
+	return this.ZhihuCfg
+}
+
+func (this *Cfg)GetBlogCfg() *BlogCfg{
+	return this.BlogCfg
+}
+
+func (this *Cfg)GetJianshuCfg() *JianshuCfg{
+	return this.JianshuCfg
+}

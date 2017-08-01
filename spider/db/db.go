@@ -70,7 +70,7 @@ func (this *MysqlDB)Init(){
 
 func (this *MysqlDB)InsertTimeLine(userid int,title string,description string,link string,source int,pub_data string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into time_line (`userid`,`title`,`description`,`link`,`source`,`pub_data`) values (%d,%q,%q,%q,%d,%s)"
+	str := "insert into time_line (`fid`,`title`,`description`,`link`,`source`,`pub_data`) values (%d,%q,%q,%q,%d,%s)"
 	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,source,pub_data)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
@@ -103,8 +103,8 @@ func (this *MysqlDB)InsertTimeLine(userid int,title string,description string,li
 
 func (this *MysqlDB)InsertTimeLineZhiHu(userid int,title string,description string,link string,verb string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into timeline_zhihu (`userid`,`title`,`description`,`link`,`verb`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
-	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,verb,pub_date)
+	str := "insert into timeline_zhihu (`fid`,`title`,`description`,`link`,`linkid`,`verb`,`pub_date`) values (%d,%q,%q,%q,%q,%q,%s)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),verb,pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{
@@ -119,8 +119,8 @@ func (this *MysqlDB)InsertTimeLineZhiHu(userid int,title string,description stri
 
 func (this *MysqlDB)InsertTimeLineJianShu(userid int,title string,description string,link string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into timeline_jianshu (`userid`,`title`,`description`,`link`,`pub_date`) values (%d,%q,%q,%q,%s)"
-	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,pub_date)
+	str := "insert into timeline_jianshu (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{
@@ -135,8 +135,8 @@ func (this *MysqlDB)InsertTimeLineJianShu(userid int,title string,description st
 
 func (this *MysqlDB)InsertTimeLineBlog(userid int,title string,description string,link string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into timeline_blog (`userid`,`title`,`description`,`link`,`pub_date`) values (%d,%q,%q,%q,%s)"
-	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,pub_date)
+	str := "insert into timeline_blog (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{

@@ -4,13 +4,14 @@ import (
 	"github.com/golang/glog"
 	"flag"
 	"spider/db"
+	"spider/jianshu"
+	"spider/cfg"
+	"spider/utils"
 	"spider/blog"
 	"strings"
-	"spider/jianshu"
 	"spider/zhihu"
 	"fmt"
 	"time"
-	"spider/cfg"
 )
 
 func main(){
@@ -20,23 +21,38 @@ func main(){
 
 	ret := []db.Famous{}
 	ret = db.GetDB().GetFamousInfo()
+
+	blogSuccTotal:=0
+	blogFailedTotal:=0
+
+	zhihuSuccTotal:=0
+	zhihuFailedTotal:=0
+
+	jianshuSuccTotal:=0
+	jianshuFailedTotal:=0
 	for _,item := range ret{
-		//if item.Id != 34 {
-		//	continue
-		//}
-		if item.Blog != "" {
-			blog.Start(item.Id, strings.TrimSpace(item.Blog))
+		if cfg.GetCfg().BlogCfg.Open && item.Blog != "" {
+			num1, num2:= blog.Start(item.Id, strings.TrimSpace(item.Blog))
+			blogSuccTotal+=num1
+			blogFailedTotal +=num2
+		}
+		if cfg.GetCfg().JianshuCfg.Open && item.JianShu != "" {
+			num1,num2:=jianshu.Start(item.Id, item.JianShu)
+			zhihuSuccTotal+=num1
+			zhihuFailedTotal +=num2
 
 		}
-		if item.JianShu != "" {
-			jianshu.Start(item.Id, item.JianShu)
-
-		}
-		if item.ZhiHu != "" {
-			zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHu), time.Now().Unix()))
+		if cfg.GetCfg().ZhihuCfg.Open && item.ZhiHu != "" {
+			num1,num2 := zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHu), time.Now().Unix()))
+			jianshuSuccTotal+=num1
+			jianshuFailedTotal +=num2
 		}
 	}
-	//
+	if cfg.GetCfg().GetPushStatus(){
+		utils.PushToWeChat("blog",blogSuccTotal,blogFailedTotal)
+		utils.PushToWeChat("zhihu",zhihuSuccTotal,zhihuFailedTotal)
+		utils.PushToWeChat("jianshu",jianshuSuccTotal,jianshuFailedTotal)
+	}
 	glog.Flush()
 
 }

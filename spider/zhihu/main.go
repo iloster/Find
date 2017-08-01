@@ -76,7 +76,9 @@ func Start(id int,url string)(int,int){
 		//glog.Info(resStr)
 		ret := ZhihuActivity{}
 		err := json.Unmarshal([]byte(resStr),&ret)
-		glog.Info("err",err)
+		if err!=nil{
+			glog.Info("err",err)
+		}
 		if err == nil{
 			for _,item := range ret.Data {
 				var title = ""
@@ -85,7 +87,7 @@ func Start(id int,url string)(int,int){
 				switch item.Verb {
 				case Verb_ANSWER_CREATE:{
 					//	回答了问题
-					title ="回答了："+item.Target.Question.Title + "--"+item.Target.Author.Name + "的问题"
+					title ="回答了："+item.Target.Question.Title + "的问题"
 					desc = item.Target.Excerpt
 					link = fmt.Sprintf("https://www.zhihu.com/question/%d/answer/%s",item.Target.Question.Id,string(item.Target.Id))
 				}

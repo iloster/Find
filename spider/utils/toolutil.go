@@ -7,6 +7,7 @@ import (
 	"github.com/golang/glog"
 	"strconv"
 	"fmt"
+	"crypto/md5"
 )
 
 func ParseTime(formatted string) (time.Time, error) {
@@ -82,10 +83,16 @@ func UrlDecode(urlstr string)(ret string){
 	return ret1
 }
 
-func PushToWeChat(name string,num1 int,num2 int,cost int64){
-	text:=name+"运行成功"
-	desp :=fmt.Sprintf("更新成功%d条记录,失败%d记录,总共用时%ds",num1,num2,cost)
+func PushToWeChat(name string,num1 int,num2 int){
+	text:=name+"运行成功,"
+	desp :=fmt.Sprintf("更新成功%d条记录,失败%d记录,%s",num1,num2,time.Now().Format("2006-01-02 15:04:05"))
 	url := fmt.Sprintf("https://sc.ftqq.com/SCU9659T32a012053f440b7d103c7df59301b1de59550945a4fa9.send?text=%q&&desp=%q",text,desp)
 	glog.Info(url)
 	HttpGet(url)
+}
+
+func Md5(str string)string{
+	data := []byte(str)
+	has := md5.Sum(data)
+	return fmt.Sprintf("%x", has) //将[]byte转成16进制
 }
