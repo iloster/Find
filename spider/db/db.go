@@ -10,13 +10,19 @@ import (
 	"spider/cfg"
 )
 type Famous struct {
-	Id int  	`json:"id"`
-	Name string     `json:"name"`
-	Blog string	`json:"blog"`
-	ZhiHu string	`json:"zhihu"`
-	JianShu string	`json:"jianshu"`
-	Avater string   `json:"avater"`
-	Brief string
+	Id 		int  		`json:"id"`
+	Name 		string     	`json:"name"`
+	BlogSpider 	string 		`json:"blogspider"`
+	ZhiHuSpider 	string 		`json:"zhihuspider"`
+	JianShuSpider 	string 		`json:"jianshuspider"`
+	JuejinSpider  	string		`json:"juejinspider"`
+	Blog 		string		`json:"blog"`
+	ZhiHu 		string		`json:"zhihu"`
+	JianShu 	string		`json:"jianshu"`
+	Weibo		string		`json:"weibo"`
+	Juejin		string		`json:"juejin"`
+	Avater 		string   	`json:"avater"`
+	Brief 		string
 }
 type MysqlDB struct {
 	DB *sql.DB
@@ -179,7 +185,7 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 
 	for rows.Next() {
 		item := Famous{}
-		err = rows.Scan(&item.Id,&item.Name,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Avater,&item.Brief)
+		err = rows.Scan(&item.Id,&item.Name,&item.BlogSpider,&item.ZhiHuSpider,&item.JianShuSpider,&item.JuejinSpider,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Weibo,&item.Juejin,&item.Avater,&item.Brief)
 		glog.Info(err,item)
 		ret = append(ret,item)
 	}

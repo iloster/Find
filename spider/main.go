@@ -31,18 +31,18 @@ func main(){
 	jianshuSuccTotal:=0
 	jianshuFailedTotal:=0
 	for _,item := range ret{
-		if cfg.GetCfg().BlogCfg.Open && item.Blog != "" {
-			num1, num2:= blog.Start(item.Id, strings.TrimSpace(item.Blog))
+		if cfg.GetCfg().BlogCfg.Open && item.BlogSpider != "" {
+			num1, num2:= blog.Start(item.Id, strings.TrimSpace(item.BlogSpider))
 			blogSuccTotal+=num1
 			blogFailedTotal +=num2
 		}
-		if cfg.GetCfg().JianshuCfg.Open && item.JianShu != "" {
-			num1,num2:=jianshu.Start(item.Id, item.JianShu)
+		if cfg.GetCfg().JianshuCfg.Open && item.JianShuSpider != "" {
+			num1,num2:=jianshu.Start(item.Id, item.JianShuSpider)
 			zhihuSuccTotal+=num1
 			zhihuFailedTotal +=num2
 
 		}
-		if cfg.GetCfg().ZhihuCfg.Open && item.ZhiHu != "" {
+		if cfg.GetCfg().ZhihuCfg.Open && item.ZhiHuSpider != "" {
 			num1,num2 := zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHu), time.Now().Unix()))
 			jianshuSuccTotal+=num1
 			jianshuFailedTotal +=num2
