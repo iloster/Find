@@ -51,7 +51,7 @@ func spider(){
 
 		}
 		if cfg.GetCfg().ZhihuCfg.Open && item.ZhiHuSpider != "" {
-			num1,num2 := zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHu), time.Now().Unix()))
+			num1,num2 := zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHuSpider), time.Now().Unix()))
 			jianshuSuccTotal+=num1
 			jianshuFailedTotal +=num2
 		}
