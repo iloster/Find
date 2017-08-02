@@ -19,6 +19,14 @@ func main(){
 	cfg.GetCfg().LoadCfg("config.json")
 	db.GetDB().Init()
 
+	spider()
+	//qn()
+	glog.Flush()
+
+}
+
+
+func spider(){
 	ret := []db.Famous{}
 	ret = db.GetDB().GetFamousInfo()
 
@@ -53,10 +61,23 @@ func main(){
 		utils.PushToWeChat("zhihu",zhihuSuccTotal,zhihuFailedTotal)
 		utils.PushToWeChat("jianshu",jianshuSuccTotal,jianshuFailedTotal)
 	}
-	glog.Flush()
-
 }
 
+func qn(){
+	ret := []db.Famous{}
+	ret = db.GetDB().GetFamousInfo()
+	//for _,item :=range ret {
+	//	if strings.TrimSpace(item.Avater)!="" {
+	//		qiniu.Start(item.Id, item.Avater)
+	//	}
+	//}
+	for _,item :=range ret {
+		if strings.TrimSpace(item.Avater)!="" {
+			//qiniu.Upload(item.Id, "jpg","/Users/dev/Desktop/trace/")
+			db.GetDB().UpdateAvater(item.Id)
+		}
+	}
+}
 //1.获取他们的博客，微博，知乎，简书，推特地址
 //2.爬取内容，存到数据库中
 func getFamousInfo(){

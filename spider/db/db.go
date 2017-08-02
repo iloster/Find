@@ -191,3 +191,16 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 	}
 	return ret
 }
+
+func (this *MysqlDB)UpdateAvater(fid int) int{
+	str:="update `famous` set `avater`=%q where `id`=%d"
+	url := fmt.Sprintf("http://ou08bmaya.bkt.clouddn.com/%d.jpg",fid)
+	sql := fmt.Sprintf(str,url,fid)
+	_, err := this.DB.Exec(sql)
+	if err != nil{
+		glog.Info("err:",err)
+		return 0
+	}
+
+	return 1
+}
