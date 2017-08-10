@@ -155,6 +155,22 @@ func (this *MysqlDB)InsertTimeLineBlog(userid int,title string,description strin
 	return int(row),nil
 }
 
+
+func (this *MysqlDB)InsertTimeLineJuejin(userid int,title string,description string,link string,pub_date string)(int,error){
+	str := "insert into timeline_juejin (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
+	//glog.Info("sql:",sql)
+	res, err := this.DB.Exec(sql)
+	if err != nil{
+		return 0,err
+	}
+	row ,err := res.LastInsertId()
+	if err != nil{
+		return 0,err
+	}
+	return int(row),nil
+}
+
 func (this *MysqlDB)IsExistTimeLineByLink(table string,link string) bool{
 	str := "select * from %s where `link`= %q"
 	sql := fmt.Sprintf(str,table,link)

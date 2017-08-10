@@ -12,6 +12,7 @@ import (
 	"spider/zhihu"
 	"fmt"
 	"time"
+	"spider/juejin"
 )
 
 func main(){
@@ -54,6 +55,9 @@ func spider(){
 			num1,num2 := zhihu.Start(item.Id, fmt.Sprintf("https://www.zhihu.com/api/v4/members/%s/activities?after_id=%d&limit=20&desktop=True", strings.TrimSpace(item.ZhiHuSpider), time.Now().Unix()))
 			jianshuSuccTotal+=num1
 			jianshuFailedTotal +=num2
+		}
+		if cfg.GetCfg().JuejinCfg.Open&&item.JuejinSpider != ""{
+			juejin.Start(item.Id,item.JuejinSpider)
 		}
 	}
 	if cfg.GetCfg().GetPushStatus(){
