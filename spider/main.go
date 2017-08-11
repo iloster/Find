@@ -41,7 +41,7 @@ func spider(){
 	jianshuFailedTotal:=0
 	for _,item := range ret{
 		if cfg.GetCfg().BlogCfg.Open && item.BlogSpider != "" {
-			num1, num2:= blog.Start(item.Id, strings.TrimSpace(item.BlogSpider))
+			num1, num2:= blog.Start(item.Id, strings.TrimSpace(item.BlogSpider),item.Blog)
 			blogSuccTotal+=num1
 			blogFailedTotal +=num2
 		}

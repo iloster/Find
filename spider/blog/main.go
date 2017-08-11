@@ -64,7 +64,7 @@ type TimeLine struct {
 }
 
 
-func Start(id int,url string) (int,int){
+func Start(id int,url string,blogurl string) (int,int){
 	glog.Info("blog url:",url,"| id:",id)
 	successNum := 0
 	failedNum := 0
@@ -83,6 +83,10 @@ func Start(id int,url string) (int,int){
 		}
 		//glog.Info(ret)
 		for _,entry := range ret.Entrys{
+			if strings.Index(entry.AtomLink.Href,"/") == 0{
+				//相对路径的情况
+				entry.AtomLink.Href = blogurl + entry.AtomLink.Href
+			}
 			if !db.GetDB().IsExistTimeLineByLink(db.Table_Blog,entry.AtomLink.Href){
 				if entry.PubDate == "" {
 					entry.PubDate = entry.UpdateDate
@@ -109,6 +113,10 @@ func Start(id int,url string) (int,int){
 			return 0,0
 		}
 		for _, item := range ret.Channel.Items {
+			if strings.Index(item.Link,"/") == 0{
+				//相对路径的情况
+				item.Link = blogurl + item.Link
+			}
 			item.Link = utils.UrlDecode(item.Link)
 			if !db.GetDB().IsExistTimeLineByLink(db.Table_Blog,item.Link) {
 
