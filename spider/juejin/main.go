@@ -40,12 +40,12 @@ func Start(id int,jujinId string){
 				tm, _ := utils.ParseTime(item.Pub_Date)
 				_, err = db.GetDB().InsertTimeLineJuejin(id,item.Title, item.Content, item.Link, fmt.Sprintf("%d", tm.Unix()))
 				if err==nil{
-					glog.Info("[Success] title:", item.Title, "| description:", item.Content, "| link:", item.Link, "| pubData:", item.Pub_Date)
+					//glog.Info("[Success] title:", item.Title, "| description:", item.Content, "| link:", item.Link, "| pubData:", item.Pub_Date)
 				}else{
-					glog.Info("[Error] title:", item.Title, "| description:", item.Content, "| link:", item.Link, "| pubData:", item.Pub_Date, "|err:", err.Error())
+					//glog.Info("[Error] title:", item.Title, "| description:", item.Content, "| link:", item.Link, "| pubData:", item.Pub_Date, "|err:", err.Error())
 				}
 			}else{
-				glog.Info("[Exist] title:",item.Title,"| description:",item.Content,"| link:",item.Link,"| pubData:",item.Pub_Date)
+				//glog.Info("[Exist] title:",item.Title,"| description:",item.Content,"| link:",item.Link,"| pubData:",item.Pub_Date)
 			}
 		}
 	}else{

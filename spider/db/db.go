@@ -21,6 +21,7 @@ type Famous struct {
 	JianShu 	string		`json:"jianshu"`
 	Weibo		string		`json:"weibo"`
 	Juejin		string		`json:"juejin"`
+	Github		string 		`json:"github"`
 	Avater 		string   	`json:"avater"`
 	Brief 		string
 }
@@ -201,7 +202,7 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 
 	for rows.Next() {
 		item := Famous{}
-		err = rows.Scan(&item.Id,&item.Name,&item.BlogSpider,&item.ZhiHuSpider,&item.JianShuSpider,&item.JuejinSpider,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Weibo,&item.Juejin,&item.Avater,&item.Brief)
+		err = rows.Scan(&item.Id,&item.Name,&item.BlogSpider,&item.ZhiHuSpider,&item.JianShuSpider,&item.JuejinSpider,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Weibo,&item.Juejin,&item.Github,&item.Avater,&item.Brief)
 		glog.Info(err,item)
 		ret = append(ret,item)
 	}
