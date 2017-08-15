@@ -65,6 +65,7 @@ func spider(){
 		utils.PushToWeChat("zhihu",zhihuSuccTotal,zhihuFailedTotal)
 		utils.PushToWeChat("jianshu",jianshuSuccTotal,jianshuFailedTotal)
 	}
+	utils.SegWords();
 }
 
 func qn(){

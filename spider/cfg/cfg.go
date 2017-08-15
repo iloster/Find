@@ -25,12 +25,18 @@ type JianshuCfg struct {
 type BlogCfg struct {
 	Open bool `json:"open"`
 }
+
+type JuejinCfg struct {
+	Open bool `json:"open"`
+}
+
 type Cfg struct {
 	MysqlCfg 	*MysqlCfg 	`json:"mysql"`
 	Push    	bool       	`json:"push"`
 	ZhihuCfg   	*ZhihuCfg  	`json:"zhihu"`
 	JianshuCfg	*JianshuCfg 	`json:"jianshu"`
 	BlogCfg		*BlogCfg	`json:"blog"`
+	JuejinCfg 	*JuejinCfg	`json:"juejin"`
 }
 var cfg *Cfg
 
