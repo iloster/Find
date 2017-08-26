@@ -9,6 +9,7 @@ import (
 	"os"
 	"io"
 	"github.com/golang/glog"
+	"spider/cfg"
 )
 
 const (
@@ -31,11 +32,32 @@ func Download(fid int,suffix string,url string){
 		panic(err)
 	}
 	filename := fmt.Sprintf("%d.%s",fid,suffix)
-	f,err := os.Create("/Users/dev/Desktop/trace/"+filename)
-	if err!=nil{
-		panic(err)
+	path := cfg.GetCfg().GetQiniuCfg().Path
+	if createDir(path){
+		f,err := os.Create(path+filename)
+		if err!=nil{
+			panic(err)
+		}
+		io.Copy(f,res.Body)
+	}else{
+		glog.Info("path路径错误",path)
 	}
-	io.Copy(f,res.Body)
+
+}
+
+func createDir(path string) bool{
+	fi,err:=os.Stat(path)
+	if err!= nil{
+		return false
+	}
+	if fi.IsDir(){
+		err:= os.MkdirAll(path,0666)
+		if err==nil{
+			return true
+		}else{
+			return false
+		}
+	}
 }
 
 func Upload(fid int,suffix string,path string){

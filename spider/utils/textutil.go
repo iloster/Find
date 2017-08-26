@@ -9,7 +9,38 @@ import (
 	"bufio"
 	"io"
 	"strings"
+	"sort"
 )
+type MapSorter []Item
+
+type Item struct {
+	Key string
+	Val float64
+}
+
+func NewMapSorter(m map[string]float64) MapSorter {
+	ms := make(MapSorter, 0, len(m))
+
+	for k, v := range m {
+		ms = append(ms, Item{k, v})
+	}
+
+	return ms
+}
+
+
+func (ms MapSorter) Len() int {
+	return len(ms)
+}
+
+func (ms MapSorter) Less(i, j int) bool {
+	return ms[i].Val > ms[j].Val // 按值排序
+	//return ms[i].Key < ms[j].Key // 按键排序
+}
+
+func (ms MapSorter) Swap(i, j int) {
+	ms[i], ms[j] = ms[j], ms[i]
+}
 
 
 func SegWords()  {
@@ -17,7 +48,7 @@ func SegWords()  {
 	segmenter.LoadDictionary("../vendor/github.com/huichen/sego/data/dictionary.txt")
 
 	// 分词
-	text := []byte("情景分析 通常我们在破解apk的时候，第一步肯定先反编译apk文件，然后开始修改代码和资源文件，最后回编译")
+	text := []byte("这跟非阻塞发送一点关系都没有，就算你用阻塞 IO ，对方一样可能分多次收到数据。这是 TCP 这个字节流协议的固有性质。")
 	segments := segmenter.Segment(text)
 	out:=sego.SegmentsToSlice(segments, false)
 	//
@@ -29,11 +60,15 @@ func SegWords()  {
 		}
 	}
 	glog.Info("list1:",list)
-	getRank(list)
+	getTopWords(getRank(list),3)
+
 }
 
 func isFilter(key string) bool{
 	if strings.TrimSpace(key)==""{
+		return true
+	}
+	if len(key) == 3 {
 		return true
 	}
 	f,err :=os.Open("../vendor/github.com/huichen/sego/data/stopword.txt")
@@ -65,7 +100,7 @@ func isFilter(key string) bool{
 	}
 }
 
-func getRank(list []string){
+func getRank(list []string) map[string]float64{
 	length:=len(list)
 	score := make(map[string]float64)
 	worlds := make(map[string]map[string]int)
@@ -88,23 +123,24 @@ func getRank(list []string){
 	for k,v :=range worlds{
 		glog.Info("key:",k,"|value:",v)
 	}
+
 	for i := 0;i<=200;i++ {
 		m := make(map[string]float64)
 		max_diff := float64(0)
 		for k, items := range worlds {
 			m[k] = float64(1 - 0.85)
-			for v, count:= range items {
+			for v, count := range items {
 
-				size := len(worlds[k])*count
+				size := len(worlds[v])*count
 				if k == v || size == 0 {
 					continue
 				}
 
 				_, exist := score[v]
 				if exist {
-					m[v] = m[v] + float64(0.85) / float64(size) * score[k]
+					m[k] = m[k] + float64(0.85) / float64(size) * score[v]
 				} else {
-					m[v] = m[v]
+					m[k] = m[k]
 				}
 			}
 			_, exist := score[k]
@@ -123,6 +159,14 @@ func getRank(list []string){
 			break
 		}
 	}
-	glog.Info("worlds:",score)
+	return score
+}
 
+//获取分数最高的几个数字
+func getTopWords(score map[string]float64,n int){
+	ms := NewMapSorter(score)
+	sort.Sort(ms)
+	for k,v :=range ms{
+		glog.Info("k:",k,"|v:",v)
+	}
 }

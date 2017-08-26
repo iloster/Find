@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"time"
 	"spider/juejin"
+	"spider/qiniu"
 )
 
 func main(){
@@ -65,20 +66,19 @@ func spider(){
 		utils.PushToWeChat("zhihu",zhihuSuccTotal,zhihuFailedTotal)
 		utils.PushToWeChat("jianshu",jianshuSuccTotal,jianshuFailedTotal)
 	}
-	utils.SegWords();
+	//utils.SegWords();
 }
 
 func qn(){
 	ret := []db.Famous{}
 	ret = db.GetDB().GetFamousInfo()
-	//for _,item :=range ret {
-	//	if strings.TrimSpace(item.Avater)!="" {
-	//		qiniu.Start(item.Id, item.Avater)
-	//	}
-	//}
 	for _,item :=range ret {
-		if strings.TrimSpace(item.Avater)!="" {
-			//qiniu.Upload(item.Id, "jpg","/Users/dev/Desktop/trace/")
+		if strings.TrimSpace(item.Avater)!="" && !strings.Contains(item.Avater,"http://ou08bmaya") {
+			qiniu.Start(item.Id, item.Avater)
+		}
+	}
+	for _,item :=range ret {
+		if strings.TrimSpace(item.Avater)!="" && !strings.Contains(item.Avater,"http://ou08bmaya"){
 			db.GetDB().UpdateAvater(item.Id)
 		}
 	}
