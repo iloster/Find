@@ -31,7 +31,7 @@ type JuejinCfg struct {
 }
 
 type QiniuCfg struct {
-	Path bool `json:"path"`
+	Path string `json:"path"`
 	AccessKey string `json:"access_key"`
 	SecretKey string `json:"secret_key"`
 }

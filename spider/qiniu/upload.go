@@ -12,32 +12,20 @@ import (
 	"spider/cfg"
 )
 
-const (
-	ACCESS_KEY = "xxxx"
-	SECRET_KEY = "xxxx"
-)
-
-
-func Start(fid int,url string){
-	//tmp := strings.Split(url,".")
-	//suffix := tmp[1]
-	glog.Info("fid:",fid,"| url:",url)
-	Download(fid,"jpg",url)
-}
 
 //首先下载每个人的头像
-func Download(fid int,suffix string,url string){
+func Download(fid int,suffix string,url string,path string){
 	res,err := http.Get(url)
 	if err!=nil{
 		panic(err)
 	}
 	filename := fmt.Sprintf("%d.%s",fid,suffix)
-	path := cfg.GetCfg().GetQiniuCfg().Path
 	if createDir(path){
 		f,err := os.Create(path+filename)
 		if err!=nil{
 			panic(err)
 		}
+		glog.Info("下载成功","|fid:",fid,"|url:",url)
 		io.Copy(f,res.Body)
 	}else{
 		glog.Info("path路径错误",path)
@@ -58,6 +46,7 @@ func createDir(path string) bool{
 			return false
 		}
 	}
+	return false
 }
 
 func Upload(fid int,suffix string,path string){
@@ -69,7 +58,7 @@ func Upload(fid int,suffix string,path string){
 		Scope: bucket,
 	}
 	putPolicy.Expires = 7200 //示例2小时有效期
-	mac:=qbox.NewMac(ACCESS_KEY,SECRET_KEY)
+	mac:=qbox.NewMac(cfg.GetCfg().GetQiniuCfg().AccessKey,cfg.GetCfg().GetQiniuCfg().SecretKey)
 	upToken := putPolicy.UploadToken(mac)
 
 	cfg := storage.Config{}
@@ -94,6 +83,6 @@ func Upload(fid int,suffix string,path string){
 		return
 	}
 	//fmt.Println(ret.Key,ret.Hash)
-	glog.Info("fid:",fid,"|key:",ret.Key,"|hash:",ret.Hash)
+	glog.Info("上传成功","|fid:",fid,"|key:",ret.Key,"|hash:",ret.Hash)
 
 }

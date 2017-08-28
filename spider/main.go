@@ -22,7 +22,7 @@ func main(){
 	db.GetDB().Init()
 
 	spider()
-	//qn()
+	qn()
 	glog.Flush()
 
 }
@@ -57,7 +57,7 @@ func spider(){
 			jianshuSuccTotal+=num1
 			jianshuFailedTotal +=num2
 		}
-		if cfg.GetCfg().JuejinCfg.Open&&item.JuejinSpider != ""{
+		if cfg.GetCfg().JuejinCfg.Open && item.JuejinSpider != ""{
 			juejin.Start(item.Id,item.JuejinSpider)
 		}
 	}
@@ -74,7 +74,9 @@ func qn(){
 	ret = db.GetDB().GetFamousInfo()
 	for _,item :=range ret {
 		if strings.TrimSpace(item.Avater)!="" && !strings.Contains(item.Avater,"http://ou08bmaya") {
-			qiniu.Start(item.Id, item.Avater)
+			path := cfg.GetCfg().GetQiniuCfg().Path
+			qiniu.Download(item.Id, "jpg",item.Avater,path)
+			qiniu.Upload(item.Id, "jpg",path)
 		}
 	}
 	for _,item :=range ret {
