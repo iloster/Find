@@ -30,12 +30,6 @@ type JuejinCfg struct {
 	Open bool `json:"open"`
 }
 
-type QiniuCfg struct {
-	Path string `json:"path"`
-	AccessKey string `json:"access_key"`
-	SecretKey string `json:"secret_key"`
-}
-
 type Cfg struct {
 	MysqlCfg 	*MysqlCfg 	`json:"mysql"`
 	Push    	bool       	`json:"push"`
@@ -43,7 +37,7 @@ type Cfg struct {
 	JianshuCfg	*JianshuCfg 	`json:"jianshu"`
 	BlogCfg		*BlogCfg	`json:"blog"`
 	JuejinCfg 	*JuejinCfg	`json:"juejin"`
-	QiniuCfg	*QiniuCfg	`json:"qiniu"`
+
 }
 var cfg *Cfg
 
@@ -86,8 +80,4 @@ func (this *Cfg)GetBlogCfg() *BlogCfg{
 
 func (this *Cfg)GetJianshuCfg() *JianshuCfg{
 	return this.JianshuCfg
-}
-
-func (this *Cfg)GetQiniuCfg() *QiniuCfg  {
-	return this.QiniuCfg
 }

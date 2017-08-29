@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"time"
 	"spider/juejin"
-	"spider/qiniu"
 )
 
 func main(){
@@ -22,7 +21,6 @@ func main(){
 	db.GetDB().Init()
 
 	spider()
-	qn()
 	glog.Flush()
 
 }
@@ -69,26 +67,4 @@ func spider(){
 	//utils.SegWords();
 }
 
-func qn(){
-	ret := []db.Famous{}
-	ret = db.GetDB().GetFamousInfo()
-	for _,item :=range ret {
-		if strings.TrimSpace(item.Avater)!="" && !strings.Contains(item.Avater,"http://ou08bmaya") {
-			path := cfg.GetCfg().GetQiniuCfg().Path
-			qiniu.Download(item.Id, "jpg",item.Avater,path)
-			qiniu.Upload(item.Id, "jpg",path)
-		}
-	}
-	for _,item :=range ret {
-		if strings.TrimSpace(item.Avater)!="" && !strings.Contains(item.Avater,"http://ou08bmaya"){
-			db.GetDB().UpdateAvater(item.Id)
-		}
-	}
-}
-//1.获取他们的博客，微博，知乎，简书，推特地址
-//2.爬取内容，存到数据库中
-func getFamousInfo(){
-	ret := []db.Famous{}
-	ret = db.GetDB().GetFamousInfo()
-	glog.Info("ret:",ret)
-}
+
