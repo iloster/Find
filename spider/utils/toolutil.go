@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"fmt"
 	"crypto/md5"
+	"path/filepath"
+	"os"
 )
 
 func ParseTime(formatted string) (time.Time, error) {
@@ -95,4 +97,12 @@ func Md5(str string)string{
 	data := []byte(str)
 	has := md5.Sum(data)
 	return fmt.Sprintf("%x", has) //将[]byte转成16进制
+}
+
+func GetCurrentDirectory() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		glog.Info("获取路径失败")
+	}
+	return strings.Replace(dir, "\\", "/", -1)
 }
