@@ -43,8 +43,8 @@ type Atom struct {
 
 type Entry struct {
 	Title string `xml:"title"`
-	Summary string `xml:"summary"`
 	AtomLink AtomLink `xml:"link"`
+	Summary string `xml:"summary"`
 	PubDate string `xml:"published"`
 	UpdateDate string `xml:"updated"`
 }
@@ -70,6 +70,9 @@ func Start(id int,url string,blogurl string) (int,int){
 	failedNum := 0
 	html :=utils.HttpGet(url)
 	//glog.Info(strings.Index(html,"<feed"))
+	if id == 31 {
+		return MeiTuanGet(id,url,blogurl)
+	}
 	if strings.Index(html,"<feed") < 100&&strings.Index(html,"<feed")>0{
 		ret := Atom{}
 		reader := bytes.NewReader([]byte(html))
@@ -83,6 +86,7 @@ func Start(id int,url string,blogurl string) (int,int){
 		}
 		//glog.Info(ret)
 		for _,entry := range ret.Entrys{
+			glog.Info("link:",entry.AtomLink.Href)
 			if strings.Index(entry.AtomLink.Href,"/") == 0{
 				//相对路径的情况
 				entry.AtomLink.Href = blogurl + entry.AtomLink.Href
