@@ -17,7 +17,7 @@ import (
 
 func main(){
 	flag.Parse()    // 1
-	cfg.GetCfg().LoadCfg("config.json")
+	cfg.GetCfg().LoadCfg(fmt.Sprintf("%s/%s",utils.GetCurrentDirectory(),"config.json"))
 	db.GetDB().Init()
 
 	spider()
