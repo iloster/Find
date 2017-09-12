@@ -13,6 +13,7 @@ type Famous struct {
 	Id 		int  		`json:"id"`
 	Name 		string     	`json:"name"`
 	BlogSpider 	string 		`json:"blogspider"`
+	HexoSpider	string		`json:"hexoSpider"`
 	ZhiHuSpider 	string 		`json:"zhihuspider"`
 	JianShuSpider 	string 		`json:"jianshuspider"`
 	JuejinSpider  	string		`json:"juejinspider"`
@@ -23,7 +24,8 @@ type Famous struct {
 	Juejin		string		`json:"juejin"`
 	Github		string 		`json:"github"`
 	Avater 		string   	`json:"avater"`
-	Brief 		string
+	Brief 		string		`json:"brief"`
+
 }
 type MysqlDB struct {
 	DB *sql.DB
@@ -173,8 +175,8 @@ func (this *MysqlDB)InsertTimeLineJuejin(userid int,title string,description str
 }
 
 func (this *MysqlDB)IsExistTimeLineByLink(table string,link string) bool{
-	str := "select * from %s where `link`= %q"
-	sql := fmt.Sprintf(str,table,link)
+	str := "select * from %s where `linkid`= %q"
+	sql := fmt.Sprintf(str,table,utils.Md5(link))
 	rows, err := this.DB.Query(sql)
 	defer rows.Close()
 	if err != nil{
@@ -202,8 +204,8 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 
 	for rows.Next() {
 		item := Famous{}
-		err = rows.Scan(&item.Id,&item.Name,&item.BlogSpider,&item.ZhiHuSpider,&item.JianShuSpider,&item.JuejinSpider,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Weibo,&item.Juejin,&item.Github,&item.Avater,&item.Brief)
-		glog.Info(err,item)
+		err = rows.Scan(&item.Id,&item.Name,&item.BlogSpider,&item.HexoSpider,&item.ZhiHuSpider,&item.JianShuSpider,&item.JuejinSpider,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Weibo,&item.Juejin,&item.Github,&item.Avater,&item.Brief)
+		//glog.Info(err,item)
 		ret = append(ret,item)
 	}
 	return ret

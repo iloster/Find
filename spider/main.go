@@ -20,7 +20,7 @@ func main(){
 	cfg.GetCfg().LoadCfg(fmt.Sprintf("%s/%s",utils.GetCurrentDirectory(),"config.json"))
 	db.GetDB().Init()
 	db.GetRedidDB().Init()
-	//spider()
+	spider()
 	db.GetRedidDB().Del("latest*")
 	glog.Flush()
 
@@ -40,11 +40,18 @@ func spider(){
 	jianshuSuccTotal:=0
 	jianshuFailedTotal:=0
 	for _,item := range ret{
+
 		if cfg.GetCfg().BlogCfg.Open && item.BlogSpider != "" {
 			num1, num2:= blog.Start(item.Id, strings.TrimSpace(item.BlogSpider),item.Blog)
 			blogSuccTotal+=num1
 			blogFailedTotal +=num2
 		}
+		if cfg.GetCfg().BlogCfg.Open && item.HexoSpider!=""{
+			num1, num2:= blog.HexoStart(item.Id, strings.TrimSpace(item.HexoSpider),item.Blog)
+			blogSuccTotal+=num1
+			blogFailedTotal +=num2
+		}
+
 		if cfg.GetCfg().JianshuCfg.Open && item.JianShuSpider != "" {
 			num1,num2:=jianshu.Start(item.Id, item.JianShuSpider)
 			zhihuSuccTotal+=num1
