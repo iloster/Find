@@ -19,8 +19,9 @@ func main(){
 	flag.Parse()    // 1
 	cfg.GetCfg().LoadCfg(fmt.Sprintf("%s/%s",utils.GetCurrentDirectory(),"config.json"))
 	db.GetDB().Init()
-
-	spider()
+	db.GetRedidDB().Init()
+	//spider()
+	db.GetRedidDB().Del("latest*")
 	glog.Flush()
 
 }
