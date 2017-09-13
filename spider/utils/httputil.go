@@ -6,12 +6,17 @@ import (
 	"time"
 	"math/rand"
 	"github.com/golang/glog"
+	"crypto/tls"
 )
 
 func HttpGet(url string) string{
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Set("User-Agent", GetUserAgent())
 	client := http.DefaultClient
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client.Transport = tr
 	res, e := client.Do(req)
 	if e != nil {
 		//log4go.INFO("Get请求%s返回错误:%s", url, e)
