@@ -34,9 +34,10 @@ type MysqlDB struct {
 var db *MysqlDB
 
 const (
-	Table_ZhiHu = "timeline_zhihu"
-	Table_JianShu = "timeline_jianshu"
-	Table_Blog = "timeline_blog"
+	Table_ZhiHu = "tb_zhihu"
+	Table_JianShu = "tb_jianshu"
+	Table_Blog = "tb_blog"
+	Table_JueJing = "tb_JueJing"
 )
 func init() {
 	db = &MysqlDB{}
@@ -112,7 +113,7 @@ func (this *MysqlDB)InsertTimeLine(userid int,title string,description string,li
 
 func (this *MysqlDB)InsertTimeLineZhiHu(userid int,title string,description string,link string,verb string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into timeline_zhihu (`fid`,`title`,`description`,`link`,`linkid`,`verb`,`pub_date`) values (%d,%q,%q,%q,%q,%q,%s)"
+	str := "insert into tb_zhihu (`fid`,`title`,`description`,`link`,`linkid`,`verb`,`pub_date`) values (%d,%q,%q,%q,%q,%q,%s)"
 	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),verb,pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
@@ -128,7 +129,7 @@ func (this *MysqlDB)InsertTimeLineZhiHu(userid int,title string,description stri
 
 func (this *MysqlDB)InsertTimeLineJianShu(userid int,title string,description string,link string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into timeline_jianshu (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
+	str := "insert into tb_jianshu (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
 	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
@@ -144,7 +145,7 @@ func (this *MysqlDB)InsertTimeLineJianShu(userid int,title string,description st
 
 func (this *MysqlDB)InsertTimeLineBlog(userid int,title string,description string,link string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into timeline_blog (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
+	str := "insert into tb_blog (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
 	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
@@ -160,7 +161,7 @@ func (this *MysqlDB)InsertTimeLineBlog(userid int,title string,description strin
 
 
 func (this *MysqlDB)InsertTimeLineJuejin(userid int,title string,description string,link string,pub_date string)(int,error){
-	str := "insert into timeline_juejin (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
+	str := "insert into tb_juejin (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
 	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
@@ -191,7 +192,7 @@ func (this *MysqlDB)IsExistTimeLineByLink(table string,link string) bool{
 
 }
 func (this *MysqlDB)GetFamousInfo()[]Famous {
-	sql := "SELECT * FROM `famous`"
+	sql := "SELECT * FROM `tb_famous`"
 	rows,err := this.DB.Query(sql)
 	defer rows.Close()
 	if err!=nil{
@@ -205,14 +206,14 @@ func (this *MysqlDB)GetFamousInfo()[]Famous {
 	for rows.Next() {
 		item := Famous{}
 		err = rows.Scan(&item.Id,&item.Name,&item.BlogSpider,&item.HexoSpider,&item.ZhiHuSpider,&item.JianShuSpider,&item.JuejinSpider,&item.Blog,&item.ZhiHu,&item.JianShu,&item.Weibo,&item.Juejin,&item.Github,&item.Avater,&item.Brief)
-		//glog.Info(err,item)
+		glog.Info(err,item)
 		ret = append(ret,item)
 	}
 	return ret
 }
 
 func (this *MysqlDB)UpdateAvater(fid int) int{
-	str:="update `famous` set `avater`=%q where `id`=%d"
+	str:="update `tb_famous` set `avater`=%q where `id`=%d"
 	url := fmt.Sprintf("http://ou08bmaya.bkt.clouddn.com/%d.jpg",fid)
 	sql := fmt.Sprintf(str,url,fid)
 	_, err := this.DB.Exec(sql)

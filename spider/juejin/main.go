@@ -36,7 +36,7 @@ func Start(id int,jujinId string){
 	err := json.Unmarshal([]byte(html),&ret)
 	if err==nil{
 		for _,item := range ret.D.EntryList {
-			if !db.GetDB().IsExistTimeLineByLink("timeline_juejin",item.Link) {
+			if !db.GetDB().IsExistTimeLineByLink(db.Table_JueJing,item.Link) {
 				tm, _ := utils.ParseTime(item.Pub_Date)
 				_, err = db.GetDB().InsertTimeLineJuejin(id,item.Title, item.Content, item.Link, fmt.Sprintf("%d", tm.Unix()))
 				if err==nil{

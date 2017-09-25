@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"time"
 	"spider/juejin"
+	"spider/wechat"
 )
 
 func main(){
@@ -21,6 +22,7 @@ func main(){
 	db.GetDB().Init()
 	db.GetRedidDB().Init()
 	spider()
+	wechat.Start()
 	db.GetRedidDB().Del("latest*")
 	glog.Flush()
 
