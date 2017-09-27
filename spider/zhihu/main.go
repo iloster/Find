@@ -87,53 +87,53 @@ func Start(id int,url string)(int,int){
 				switch item.Verb {
 				case Verb_ANSWER_CREATE:{
 					//	回答了问题
-					title ="回答了："+item.Target.Question.Title
+					title = item.Target.Question.Title
 					desc = item.Target.Excerpt
 					link = fmt.Sprintf("https://www.zhihu.com/question/%d/answer/%s",item.Target.Question.Id,string(item.Target.Id))
 				}
 				case Verb_ANSWER_VOTE_UP:{
 					//赞同问题
-					title ="赞同了:" + item.Target.Question.Title + "--"+item.Target.Author.Name+"的回答"
+					title = item.Target.Question.Title + "--"+item.Target.Author.Name+"的回答"
 					desc  = item.Target.Excerpt
 					link = fmt.Sprintf("https://www.zhihu.com/question/%d/answer/%s",item.Target.Question.Id,string(item.Target.Id))
 				}
 				case Verb_MEMBER_FOLLOW_ROUNDTABLE:{
-					title = "关注了圆桌:" + item.Target.Name
+					title =  item.Target.Name
 					desc = item.Target.Description
 					link = fmt.Sprintf("https://www.zhihu.com/roundtable/%s",string(item.Target.Id))
 				}
 				case Verb_MEMBER_VOTEUP_ARTICLE:{
-					title = "赞了文章:" + item.Target.Title + "--" + item.Target.Author.Name
+					title =  item.Target.Title + "--" + item.Target.Author.Name
 					desc = item.Target.Excerpt
 					link = fmt.Sprintf("https://zhuanlan.zhihu.com/p/%s",string(item.Target.Id))
 				}
 				case Verb_QUESTION_FOLLOW:{
 					//	关注了问题
-					title = "关注了问题:"+item.Target.Title
+					title = item.Target.Title
 					desc = ""
 					link = fmt.Sprintf("https://www.zhihu.com/question/%s",string(item.Target.Id))
 				}
 				case Verb_MEMBER_FOLLOW_COLLECTION:{
 					//关注收藏夹
-					title = "关注了收藏夹:"+item.Target.Title
+					title = item.Target.Title
 					desc = ""
 					link = fmt.Sprintf("https://www.zhihu.com/collection/%s",string(item.Target.Id))
 				}
 				case Verb_TOPIC_FOLLOW:{
 					//关注了话题
-					title = "关注了话题:"+item.Target.Name
+					title = item.Target.Name
 					desc = ""
 					link = fmt.Sprintf("https://www.zhihu.com/topic/%s/hot",string(item.Target.Id))
 				}
 				case Verb_QUESTION_CREATE:{
 					//提出问题
-					title = "提出了问题:" + item.Target.Title
+					title =  item.Target.Title
 					desc = ""
 					link = fmt.Sprintf("https://www.zhihu.com/question/%s",string(item.Target.Id))
 				}
 				case Verb_MEMBER_CREATE_ARTICLE:{
 					//发表了文章
-					title = "发表了文章:"+item.Target.Title
+					title = item.Target.Title
 					desc = item.Target.Excerpt
 					link = fmt.Sprintf("https://zhuanlan.zhihu.com/p/%s",string(item.Target.Id))
 				}
