@@ -16,6 +16,7 @@ func HttpGet(url string) string{
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
+	client.Timeout = 10*time.Second
 	client.Transport = tr
 	res, e := client.Do(req)
 	if e != nil {

@@ -12,7 +12,9 @@ import (
 )
 
 var Source_Blog = 1
-
+//select substring(title,7) from tb_zhihu where title REGEXP'发表了文章:'
+//update tb_zhihu set title=substring(title,7) where title REGEXP'发表了文章:'
+//
 
 type Feed struct {
 	Rss xml.Name `xml:"rss"`
