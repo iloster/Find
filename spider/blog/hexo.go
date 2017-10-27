@@ -25,6 +25,7 @@ func HexoStart(id int,url string,blogurl string)(int,int){
 	doc, err := goquery.NewDocument(blogurl)
 	if err!=nil{
 		glog.Info("[hexo] error:",err.Error()," | blogurl:",blogurl)
+		return 0,0
 	}
 	items := []*HexoPost{}
 	doc.Find(".post-block").Each(func(i int, s *goquery.Selection) {
