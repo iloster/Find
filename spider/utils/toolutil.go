@@ -10,6 +10,9 @@ import (
 	"crypto/md5"
 	"path/filepath"
 	"os"
+	"crypto/sha1"
+	"encoding/base64"
+	"crypto/hmac"
 )
 
 func ParseTime(formatted string) (time.Time, error) {
@@ -55,6 +58,9 @@ func ParseTime(formatted string) (time.Time, error) {
 		t, err = time.ParseInLocation(layout, formatted,loc)
 		if !t.IsZero() {
 			break
+		}else{
+			//如果失败，返回当前时间
+			return time.Now(),nil
 		}
 	}
 	return t, err
@@ -105,4 +111,23 @@ func GetCurrentDirectory() string {
 		glog.Info("获取路径失败")
 	}
 	return strings.Replace(dir, "\\", "/", -1)
+}
+
+func Sha1(str string)string{
+	h := sha1.New()
+	//写入要处理的字节。如果是一个字符串，需要使用[]byte(s) 来强制转换成字节数组。
+	h.Write([]byte(str))
+	//这个用来得到最终的散列值的字符切片。Sum 的参数可以用来都现有的字符切片追加额外的字节切片：一般不需要要。
+	bs := h.Sum(nil)
+	return fmt.Sprintf("%x", bs)
+}
+
+func Base64Encode(str string) string {
+	return  base64.StdEncoding.EncodeToString([]byte(str))
+}
+
+func Hmac(str string,key string) string{
+	mac := hmac.New(sha1.New, []byte(key))
+	mac.Write([]byte(str))
+	return fmt.Sprintf("%x", mac.Sum(nil))
 }
