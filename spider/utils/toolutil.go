@@ -58,10 +58,10 @@ func ParseTime(formatted string) (time.Time, error) {
 		t, err = time.ParseInLocation(layout, formatted,loc)
 		if !t.IsZero() {
 			break
-		}else{
-			//如果失败，返回当前时间
-			return time.Now(),nil
 		}
+	}
+	if t.IsZero(){
+		return time.Now(),nil
 	}
 	return t, err
 }
