@@ -65,6 +65,21 @@ func ParseTime(formatted string) (time.Time, error) {
 	}
 	return t, err
 }
+
+//2017年1月1日
+func ParseTime2(formatted string) (time.Time, error) {
+	if strings.Contains(formatted,"年"){
+		splitStr := strings.Split(formatted,"年")
+		year,_ := strconv.Atoi(splitStr[0])
+		splitStr2 := strings.Split(splitStr[1],"月")
+		month,_ := strconv.Atoi(splitStr2[0])
+		splitStr3 := strings.Split(splitStr2[1],"日")
+		day,_ := strconv.Atoi(splitStr3[0])
+		return time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.Local),nil
+	}
+	return time.Now(),nil
+}
+
 func SubString(str string,begin int,length int) (substr string) {
 	// 将字符串的转换成[]rune
 	rs := []rune(str)
