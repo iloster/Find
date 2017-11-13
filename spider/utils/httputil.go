@@ -4,13 +4,17 @@ import (
 	"net/http"
 	"io/ioutil"
 	"time"
-	"math/rand"
 	"github.com/golang/glog"
 	"crypto/tls"
+	"math/rand"
 )
 
 func HttpGet(url string) string{
-	req, _ := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
+	if err!=nil{
+		glog.Info("HttpGet error: ",err.Error())
+		return ""
+	}
 	req.Header.Set("User-Agent", GetUserAgent())
 	client := http.DefaultClient
 	tr := &http.Transport{
@@ -56,4 +60,5 @@ func GetUserAgent() string {
 
 	var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	return userAgent[r.Intn(len(userAgent))]
+	//return userAgent[0]
 }

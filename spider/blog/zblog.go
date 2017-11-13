@@ -28,6 +28,8 @@ func ZBlogGet(id int,url string,blogurl string){
 	doc.Find(".post").Each(func(i int, s *goquery.Selection) {
 		item := &ZBlogPost{}
 		item.Title = strings.TrimSpace(s.Find(".post-title").Text())
+		tag := utils.GetTag(item.Title)
+		glog.Info("[ZBlog] ZBlogGet:",tag)
 		item.Content = strings.TrimSpace(s.Find(".post-body").Text())
 		item.PubDate = strings.TrimSpace(s.Find(".post-date").Text())
 		item.Link,_ = s.Find(".post-title").Find("a").Eq(0).Attr("href")
@@ -48,7 +50,7 @@ func ZBlogGet(id int,url string,blogurl string){
 			//glog.Info("[Exist] title:",item.Title,"| description:",item.Content,"| link:",item.Link,"| pubData:",item.PubDate)
 		}
 	}
-	return successNum,failedNum
+	//return successNum,failedNum
 
 }
 

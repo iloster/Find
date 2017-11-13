@@ -113,8 +113,9 @@ func (this *MysqlDB)InsertTimeLine(userid int,title string,description string,li
 
 func (this *MysqlDB)InsertTimeLineZhiHu(userid int,title string,description string,link string,verb string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into tb_zhihu (`fid`,`title`,`description`,`link`,`linkid`,`verb`,`pub_date`) values (%d,%q,%q,%q,%q,%q,%s)"
-	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),verb,pub_date)
+	tag := utils.GetTag(title)
+	str := "insert into tb_zhihu (`fid`,`title`,`description`,`link`,`linkid`,`verb`,`pub_date`,`tag`) values (%d,%q,%q,%q,%q,%q,%s,%q)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),verb,pub_date,tag)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{
@@ -129,8 +130,9 @@ func (this *MysqlDB)InsertTimeLineZhiHu(userid int,title string,description stri
 
 func (this *MysqlDB)InsertTimeLineJianShu(userid int,title string,description string,link string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into tb_jianshu (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
-	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
+	tag := utils.GetTag(title)
+	str := "insert into tb_jianshu (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`,`tag`) values (%d,%q,%q,%q,%q,%s,%q)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date,tag)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{
@@ -145,8 +147,9 @@ func (this *MysqlDB)InsertTimeLineJianShu(userid int,title string,description st
 
 func (this *MysqlDB)InsertTimeLineBlog(userid int,title string,description string,link string,pub_date string) (int ,error){
 	//insert into time_line (`id`,`userid`,`title`,`description`,`link`,`pub_data`) values ('0','1','test title','test Description','test Link','1496031517')
-	str := "insert into tb_blog (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`) values (%d,%q,%q,%q,%q,%s)"
-	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date)
+	tag := utils.GetTag(title)
+	str := "insert into tb_blog (`fid`,`title`,`description`,`link`,`linkid`,`pub_date`,`tag`) values (%d,%q,%q,%q,%q,%s,%q)"
+	sql := fmt.Sprintf(str,userid,title,utils.SubString(description,0,1500),link,utils.Md5(link),pub_date,tag)
 	//glog.Info("sql:",sql)
 	res, err := this.DB.Exec(sql)
 	if err != nil{

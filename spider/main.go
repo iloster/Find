@@ -20,8 +20,8 @@ func main(){
 	cfg.GetCfg().LoadCfg(fmt.Sprintf("%s/%s",utils.GetCurrentDirectory(),"config.json"))
 	db.GetDB().Init()
 	db.GetRedidDB().Init()
-	//spider()
-	blog.ZBlogGet(1,"http://rarnu.com","http://rarnu.com")
+	spider()
+	//blog.ZBlogGet(1,"http://rarnu.com","http://rarnu.com")
 	db.GetRedidDB().Del("latest*")
 	glog.Flush()
 
