@@ -44,7 +44,7 @@ func MeiTuanGet(id int,url string,blogurl string)(int,int){
 		if !db.GetDB().IsExistTimeLineByLink(db.Table_Blog,entry.Link){
 			entry.Link = utils.UrlDecode(entry.Link)
 			tm, _ := utils.ParseTime(entry.PubDate)
-			_, err = db.GetDB().InsertTimeLineBlog(id, entry.Title, utils.SubString(strings.Replace(entry.Content,"\n","",-1),0,500), entry.Link, fmt.Sprintf("%d", tm.Unix()))
+			_, err = db.GetDB().InsertTimeLineBlog(id, entry.Title,strings.Replace(entry.Content,"\n","",-1), entry.Link, fmt.Sprintf("%d", tm.Unix()))
 			if err == nil {
 				//glog.Info("[Success] blog title:", entry.Title, "| description:", entry.Summary, "| link:", entry.AtomLink.Href, "| pubData:", entry.PubDate)
 				successNum++

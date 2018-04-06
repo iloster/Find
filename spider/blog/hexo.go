@@ -41,7 +41,7 @@ func HexoStart(id int,url string,blogurl string)(int,int){
 	for _,item :=range items{
 		if !db.GetDB().IsExistTimeLineByLink(db.Table_Blog,item.Link){
 			tm,_ := utils.ParseTime(item.PubDate)
-			_,err := db.GetDB().InsertTimeLineBlog(id,item.Title,utils.SubString(strings.Replace(item.Content,"\n","",-1),0,500),item.Link,fmt.Sprintf("%d",tm.Unix()))
+			_,err := db.GetDB().InsertTimeLineBlog(id,item.Title,strings.Replace(item.Content,"\n","",-1),item.Link,fmt.Sprintf("%d",tm.Unix()))
 			if err == nil {
 				//glog.Info("[Success] title:", item.Title, "| description:", item.Abstract, "| link:", item.Href, "| pubData:", item.PubDate)
 				successNum++
