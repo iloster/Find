@@ -43,8 +43,6 @@ func (this *MysqlDB)Init(){
 	path:=fmt.Sprintf("%s:%s@tcp(127.0.0.1:%d)/%s?charset=utf8mb4",mysqlcfg.UserName,mysqlcfg.Password,mysqlcfg.Port,mysqlcfg.DataBase)
 	glog.Info("wait init db...",path)
 	defer glog.Info("init db ok!")
-	//db,err := sql.Open("mysql","root:licheng19931202@tcp(127.0.0.1:3306)/trace?charset=utf8")
-	//db,err := sql.Open("mysql","root:licheng@tcp(127.0.0.1:3306)/waste?charset=utf8")
 	db,err := sql.Open("mysql",path)
  	if err!=nil{
 		panic(err.Error())
